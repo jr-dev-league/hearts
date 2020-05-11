@@ -5,6 +5,13 @@ import (
 	"testing"
 )
 
+const (
+	playerOne   = 0
+	playerTwo   = 1
+	playerThree = 2
+	playerFour  = 3
+)
+
 var handOne = []Card{
 	{value: 0, suit: Spades},
 	{value: 4, suit: Spades},
@@ -83,7 +90,7 @@ func TestNewGameState(t *testing.T) {
 func TestSetAndGet(t *testing.T) {
 	game := New()
 
-	err := game.SetPlayer(0, 0, handOne)
+	err := game.SetPlayer(0, 0, maxHandSize, cloneHand(handOne))
 
 	if err != nil {
 		t.Error("should be able to set an unset hand")
@@ -95,7 +102,7 @@ func TestSetAndGet(t *testing.T) {
 		t.Error("should be able to get a set player")
 	}
 
-	err = game.SetPlayer(0, 0, handFour)
+	err = game.SetPlayer(0, 0, maxHandSize, cloneHand(handFour))
 
 	if err == nil {
 		t.Error("should not be able to set a player who is already set")
@@ -121,10 +128,10 @@ func TestPlayCard(t *testing.T) {
 	game := New()
 	cardIndex := 3
 
-	game.SetPlayer(0, 0, handOne)
-	game.SetPlayer(1, 0, handTwo)
-	game.SetPlayer(2, 0, handThree)
-	game.SetPlayer(3, 0, handFour)
+	game.SetPlayer(0, 0, maxHandSize, cloneHand(handOne))
+	game.SetPlayer(1, 0, maxHandSize, cloneHand(handTwo))
+	game.SetPlayer(2, 0, maxHandSize, cloneHand(handThree))
+	game.SetPlayer(3, 0, maxHandSize, cloneHand(handFour))
 
 	player, _ := game.Player(0)
 
@@ -164,8 +171,56 @@ func TestPlayCard(t *testing.T) {
 func TestViewAs(t *testing.T) {
 	game := New()
 
-	game.SetPlayer(3, 0, handFour)
+	game.SetPlayer(0, 0, maxHandSize, cloneHand(handOne))
+	game.SetPlayer(1, 0, maxHandSize, cloneHand(handTwo))
+	game.SetPlayer(2, 0, maxHandSize, cloneHand(handThree))
+	game.SetPlayer(3, 0, maxHandSize, cloneHand(handFour))
 
+	view := game.ViewAs(playerThree)
+
+	err := view.PlayUp(2, handThree[3])
+
+	if err == nil {
+		t.Error("should not be able to play cards in a readonly state")
+	}
+
+	err = view.SetPlayer(0, 10, 12, handOne)
+
+	if err == nil {
+		t.Error("should not be able to set players in a readonly state")
+	}
+
+	for i, player := range view.players {
+		if player.cardCount != maxHandSize {
+			t.Errorf("player %d should have %d cards", i, maxHandSize)
+		}
+
+		if i == playerThree {
+			err := compareHand(player.hand, handThree)
+
+			if err != nil {
+				t.Errorf("expected:\n\n%v\nfound:%v\n", handThree, player.hand)
+			}
+
+		} else if len(player.hand) != 0 {
+			t.Errorf("oppenent hands should not be viewable. saw %v", player.hand)
+		}
+	}
+
+	playedCard := handFour[5]
+
+	game.PlayUp(playerFour, playedCard)
+	view = game.ViewAs(playerThree)
+
+	if len(view.players[playerFour].hand) != 1 {
+		t.Error("player should only have one visible card")
+	}
+
+	actual := view.players[playerFour].hand[0]
+
+	if err := compareCard(actual, playedCard); err != nil {
+		t.Error("the wrong card is showing")
+	}
 }
 
 // PRIVATE HELPER FUNCTIONS
@@ -178,10 +233,36 @@ func compareHand(actual []Card, expected []Card) error {
 
 	// If each card matches, and the length is the same, they must match.
 	for i, card := range actual {
-		if card.value != handOne[i].value {
-			return fmt.Errorf("expected:\n%v\nfound:\n%v", expected, actual)
-		}
+		return compareCard(card, expected[i])
 	}
 
 	return nil
+}
+
+func compareCard(actual Card, expected Card) error {
+	if actual.value != expected.value {
+		return fmt.Errorf("expected:\n%v\nfound:\n%v", expected, actual)
+	}
+
+	return nil
+}
+
+// Even though arrays can be copied by value, an array of struct is an array
+// of pointers to structs, so copying the array doesn't change the underlying
+// structs. We don't want to edit the test structs at the top of this file, so
+// we need to clone those arrays to keep them safe!
+func cloneHand(hand []Card) []Card {
+	clone := make([]Card, 0, maxHandSize)
+	for _, card := range hand {
+		cardClone := Card{}
+
+		cardClone.exposed = card.exposed
+		cardClone.played = card.played
+		cardClone.suit = card.suit
+		cardClone.value = card.value
+
+		clone = append(clone, cardClone)
+	}
+
+	return clone
 }

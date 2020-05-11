@@ -9,23 +9,28 @@ func New() State {
 		players:   [4]Player{},
 		takenLast: 4,
 		shootable: true,
+		readonly:  false,
 	}
 
 	return game
 }
 
-// SetPlayer sets a given (by index) player's hand to a given array of cards.
-func (game *State) SetPlayer(i uint8, points int8, hand []Card) error {
+// SetPlayer sets a player at the given index
+func (game *State) SetPlayer(i uint8, points int8, cardCount uint8, hand []Card) error {
+	if game.readonly {
+		return errors.New("cannot edit a readonly game")
+	}
+
 	if game.players[i].hand != nil {
 		return errors.New("this player has already been set")
 	}
 
-	game.players[i] = Player{points, uint8(len(hand)), hand}
+	game.players[i] = Player{cardCount, hand, points}
 
 	return nil
 }
 
-// Player returns a card array representing the given (by index) player's hand
+// Player returns a player by the given index
 func (game *State) Player(i uint8) (*Player, error) {
 	hand := game.players[i].hand
 
@@ -43,7 +48,7 @@ func (game *State) ViewAs(p uint8) State {
 	for i := uint8(0); i < uint8(len(game.players)); i++ {
 		player := &game.players[i]
 		if i == p {
-			view.SetPlayer(i, player.points, player.hand)
+			view.SetPlayer(i, player.points, maxHandSize, player.hand)
 		} else {
 			hand := make([]Card, 0, maxHandSize)
 
@@ -55,10 +60,11 @@ func (game *State) ViewAs(p uint8) State {
 				}
 			}
 
-			view.SetPlayer(i, player.points, hand)
+			view.SetPlayer(i, player.points, maxHandSize, hand)
 		}
 	}
 
+	view.readonly = true
 	return view
 }
 
@@ -67,6 +73,10 @@ func (game *State) ViewAs(p uint8) State {
 // there is no need to remove it from their hand. It should be up to the
 // view to display the card in the middle of the table.
 func (game *State) PlayUp(p uint8, c Card) error {
+	if game.readonly {
+		return errors.New("cannot edit a readonly game")
+	}
+
 	player := game.players[p]
 	i, err := findCard(&player.hand, c)
 
