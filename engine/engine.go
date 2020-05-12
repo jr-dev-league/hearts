@@ -1,6 +1,8 @@
 package engine
 
-import "errors"
+import (
+	"errors"
+)
 
 // New creates a new game status
 func New() State {
@@ -78,7 +80,7 @@ func (game *State) PlayUp(p uint8, c Card) error {
 	}
 
 	player := game.players[p]
-	i, err := findCard(&player.hand, c)
+	i, err := findCard(player.hand, c)
 
 	if err != nil {
 		return err
@@ -95,12 +97,44 @@ func (game *State) PlayUp(p uint8, c Card) error {
 	return nil
 }
 
+// Discard deletes a card from the hand of the player p
+func (game *State) Discard(p uint8, c Card) error {
+	pl := &game.players[p]
+	i, err := findCard(pl.hand, c)
+
+	if err != nil {
+		return errors.New("engine.Game.Discard: card not found")
+	}
+
+	if i != -1 {
+		pl.hand = append(pl.hand[:i], pl.hand[i+1:]...)
+		pl.cardCount--
+	}
+
+	return err
+}
+
+// DiscardPlayed played deletes all cards from the game that have been played,
+// and returns a slice of the cards deleted in this way
+func (game *State) DiscardPlayed() (stack []Card) {
+	for i := range game.players {
+		pl := &game.players[i]
+		for i, card := range pl.hand {
+			if card.played == true {
+				game.Discard(uint8(i), card)
+				stack = append(stack, card)
+			}
+		}
+	}
+	return stack
+}
+
 // PRIVATE HELPER FUNCTIONS
 
 // findCard searches a given hand for a card. Returns a reference to the card
 // if found, and an error if not.
-func findCard(stack *[]Card, target Card) (int, error) {
-	for i, card := range *stack {
+func findCard(stack []Card, target Card) (int, error) {
+	for i, card := range stack {
 		if target.suit == card.suit &&
 			target.value == card.value {
 			return i, nil
