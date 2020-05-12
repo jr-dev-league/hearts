@@ -368,21 +368,23 @@ func TestDiscardAll(t *testing.T) {
 	game.SetPlayer(2, 0, maxHandSize, cloneHand(handThree))
 	game.SetPlayer(3, 0, maxHandSize, cloneHand(handFour))
 
-	view := game.ViewAs(playerOne)
-	view.PlayUp(0, handOne[0])
-	view = game.ViewAs(playerOne)
-	view.PlayUp(1, handTwo[0])
-	view = game.ViewAs(playerOne)
-	view.PlayUp(3, handThree[0])
-	view = game.ViewAs(playerOne)
-	view.PlayUp(4, handFour[0])
+	game.PlayUp(0, handOne[0])
+	game.PlayUp(1, handTwo[0])
+	game.PlayUp(2, handThree[0])
+	game.PlayUp(3, handFour[0])
 
 	actualDiscarded := game.DiscardPlayed()
+
 	expectedDiscarded := []Card{
 		handOne[0],
 		handTwo[0],
 		handThree[0],
 		handFour[0],
+	}
+
+	for i := range expectedDiscarded {
+		expectedDiscarded[i].played = true
+		expectedDiscarded[i].exposed = true
 	}
 
 	if err := compareHand(actualDiscarded, expectedDiscarded); err != nil {
@@ -395,7 +397,6 @@ func TestDiscardAll(t *testing.T) {
 	if err := compareHand(actualDiscarded, expectedDiscarded); err != nil {
 		t.Error(err)
 	}
-
 }
 
 // PRIVATE HELPER FUNCTIONS
@@ -415,8 +416,10 @@ func compareHand(actual []Card, expected []Card) error {
 }
 
 func compareCard(actual Card, expected Card) error {
-	if actual != expected {
-		return fmt.Errorf("expected:\n%v\nfound:\n%v", expected, actual)
+	if actual.value != expected.value {
+		if actual != expected {
+			return fmt.Errorf("expected:\n%v\nfound:\n%v", expected, actual)
+		}
 	}
 
 	return nil

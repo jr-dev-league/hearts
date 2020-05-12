@@ -117,11 +117,11 @@ func (game *State) Discard(p uint8, c Card) error {
 // DiscardPlayed played deletes all cards from the game that have been played,
 // and returns a slice of the cards deleted in this way
 func (game *State) DiscardPlayed() (stack []Card) {
-	for i := range game.players {
-		pl := &game.players[i]
-		for i, card := range pl.hand {
+	for p := range game.players {
+		pl := &game.players[p]
+		for _, card := range pl.hand {
 			if card.played == true {
-				game.Discard(uint8(i), card)
+				game.Discard(uint8(p), card)
 				stack = append(stack, card)
 			}
 		}
