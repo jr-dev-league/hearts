@@ -218,7 +218,6 @@ func TestViewAs(t *testing.T) {
 
 	actual := view.players[playerFour].hand[0]
 
-
 	if actual.suit != playedCard.suit || actual.value != playedCard.value {
 		t.Error("the wrong card is showing")
 	}
