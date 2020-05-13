@@ -218,7 +218,8 @@ func TestViewAs(t *testing.T) {
 
 	actual := view.players[playerFour].hand[0]
 
-	if err := compareCard(actual, playedCard); err != nil {
+
+	if actual.suit != playedCard.suit || actual.value != playedCard.value {
 		t.Error("the wrong card is showing")
 	}
 }
@@ -409,16 +410,8 @@ func compareHand(actual []Card, expected []Card) error {
 
 	// If each card matches, and the length is the same, they must match.
 	for i, card := range actual {
-		return compareCard(card, expected[i])
-	}
-
-	return nil
-}
-
-func compareCard(actual Card, expected Card) error {
-	if actual.value != expected.value {
-		if actual != expected {
-			return fmt.Errorf("expected:\n%v\nfound:\n%v", expected, actual)
+		if card != expected[i] {
+			return fmt.Errorf("expected:\n%v\nfound:\n%v", expected[i], card)
 		}
 	}
 

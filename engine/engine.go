@@ -1,8 +1,6 @@
 package engine
 
-import (
-	"errors"
-)
+import "errors"
 
 // New creates a new game status
 func New() State {
@@ -131,8 +129,8 @@ func (game *State) DiscardPlayed() (stack []Card) {
 
 // PRIVATE HELPER FUNCTIONS
 
-// findCard searches a given hand for a card. Returns a reference to the card
-// if found, and an error if not.
+// findCard searches a given hand for a card. Returns the card index if found
+// and an error if not.
 func findCard(stack []Card, target Card) (int, error) {
 	for i, card := range stack {
 		if target.suit == card.suit &&

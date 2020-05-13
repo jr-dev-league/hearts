@@ -5,15 +5,15 @@
 - User can view a list of available seats from the homepage
 - User can select a seat and join a game
 - Game starts when all users are seated
-- Players can play a full game of hearts with other players
-- The players view of the game updates automatically
+- User can play a full game of hearts with other players
+- The user's view of the game updates automatically
 
 ## Technical Overview
 
 - Games are played in memory, no need for a db in v1
 - Users cannot log in, but web app session should remember their seat
-- Hearts games should be complete and contain all all game rules
-- Automatic games updates can be done via polling
+- Hearts games should be complete and contain all game rules
+- Automatic game updates can be done via polling
 
 ## Backend
 
@@ -24,7 +24,7 @@ will use the net/http package.
 ### Games
 
 The game resource manages the state of the game. Requests to this resource
-does things like:
+do things like:
 
 - Get the state of the game
 - Get the state of the game for a particular player
@@ -80,7 +80,7 @@ button and be returned to the homepage, marking a closed seat as open.
 
 Once the game is started it should not be joinable or leaveable in v1. Players
 should be able to interact with the game state from the page by playing cards.
-The game page should display a players cards, the cards that have been put on
-the table, all the players scored (by their seat, since there is no user
+The game page should display a user's cards, the cards that have been put on
+the table, all the players' scores (by their seat, since there is no user
 login). Each edge of the screen should represent a seat, with the bottom edge
 representing the user. Animations should clearly show who took a trick.
