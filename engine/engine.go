@@ -78,7 +78,7 @@ func (game *State) PlayUp(p uint8, c Card) error {
 	}
 
 	player := game.players[p]
-	i, err := findCard(&player.hand, c)
+	i, err := findCard(player.hand, c)
 
 	if err != nil {
 		return err
@@ -97,10 +97,10 @@ func (game *State) PlayUp(p uint8, c Card) error {
 
 // PRIVATE HELPER FUNCTIONS
 
-// findCard searches a given hand for a card. Returns a reference to the card
-// if found, and an error if not.
-func findCard(stack *[]Card, target Card) (int, error) {
-	for i, card := range *stack {
+// findCard searches a given hand for a card. Returns the card index if found
+// and an error if not.
+func findCard(stack []Card, target Card) (int, error) {
+	for i, card := range stack {
 		if target.suit == card.suit &&
 			target.value == card.value {
 			return i, nil
