@@ -95,7 +95,45 @@ func (game *State) PlayUp(p uint8, c Card) error {
 	return nil
 }
 
+// Discard deletes a card from the hand of the player p
+func (game *State) Discard(p uint8, card Card) error {
+	pl := &game.players[p]
+	i, err := findCard(pl.hand, card)
+
+	if err != nil {
+		return errors.New("engine.Game.Discard: card not found")
+	}
+
+	if i != -1 {
+		pl.discard(i, card)
+	}
+
+	return err
+}
+
+// DiscardPlayed played deletes all cards from the game that have been played,
+// and returns a slice of the cards deleted in this way
+func (game *State) DiscardPlayed() (stack []Card) {
+	for p := range game.players {
+		pl := &game.players[p]
+		for i, card := range pl.hand {
+			if card.played == true {
+				pl.discard(i, card)
+				stack = append(stack, card)
+			}
+		}
+	}
+	return stack
+}
+
 // PRIVATE HELPER FUNCTIONS
+
+// discard (lowercase) is a helper method to call on a player to remove a 
+// card at index i in their hand
+func (player *Player) discard(i int, card Card) {
+	player.hand = append(player.hand[:i], player.hand[i+1:]...)
+	player.cardCount--
+} 
 
 // findCard searches a given hand for a card. Returns the card index if found
 // and an error if not.

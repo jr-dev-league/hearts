@@ -223,6 +223,182 @@ func TestViewAs(t *testing.T) {
 	}
 }
 
+func TestDiscard(t *testing.T) {
+	game := New()
+
+	game.SetPlayer(0, 0, maxHandSize, cloneHand(handOne))
+
+	spadesAce := Card{true, true, Spades, 0}
+	err := game.Discard(0, spadesAce)
+	if err != nil {
+		t.Error("expected no error, but returned one")
+	}
+
+	expected := []Card{
+		{value: 4, suit: Spades},
+		{value: 9, suit: Spades},
+		{value: 0, suit: Diamonds},
+		{value: 1, suit: Diamonds},
+		{value: 3, suit: Diamonds},
+		{value: 5, suit: Diamonds},
+		{value: 9, suit: Diamonds},
+		{value: 1, suit: Clubs},
+		{value: 2, suit: Clubs},
+		{value: 13, suit: Clubs},
+		{value: 0, suit: Hearts},
+		{value: 8, suit: Hearts},
+	}
+
+	actual := game.players[0].hand
+
+	if err := compareHand(actual, expected); err != nil {
+		t.Error(err)
+	}
+
+	expectedCardCount := uint8(12)
+	actualCardCount := game.players[0].cardCount
+
+	if expectedCardCount != actualCardCount {
+		t.Errorf("expected cardCount of %d, actual: %d", expectedCardCount, actualCardCount)
+	}
+
+	heartsEight := Card{true, true, Hearts, 8}
+
+	err = game.Discard(0, heartsEight)
+	if err != nil {
+		t.Error("expected no error, but returned one")
+	}
+
+	expected = []Card{
+		{value: 4, suit: Spades},
+		{value: 9, suit: Spades},
+		{value: 0, suit: Diamonds},
+		{value: 1, suit: Diamonds},
+		{value: 3, suit: Diamonds},
+		{value: 5, suit: Diamonds},
+		{value: 9, suit: Diamonds},
+		{value: 1, suit: Clubs},
+		{value: 2, suit: Clubs},
+		{value: 13, suit: Clubs},
+		{value: 0, suit: Hearts},
+	}
+
+	actual = game.players[0].hand
+
+	if err := compareHand(actual, expected); err != nil {
+		t.Error(err)
+	}
+
+	expectedCardCount = uint8(11)
+	actualCardCount = game.players[0].cardCount
+
+	if expectedCardCount != actualCardCount {
+		t.Errorf("expected cardCount of %d, actual: %d", expectedCardCount, actualCardCount)
+	}
+
+	diamondsFive := Card{true, true, Diamonds, 5}
+	game.Discard(0, diamondsFive)
+
+	expected = []Card{
+		{value: 4, suit: Spades},
+		{value: 9, suit: Spades},
+		{value: 0, suit: Diamonds},
+		{value: 1, suit: Diamonds},
+		{value: 3, suit: Diamonds},
+		{value: 9, suit: Diamonds},
+		{value: 1, suit: Clubs},
+		{value: 2, suit: Clubs},
+		{value: 13, suit: Clubs},
+		{value: 0, suit: Hearts},
+	}
+
+	actual = game.players[0].hand
+
+	if err := compareHand(actual, expected); err != nil {
+		t.Error(err)
+	}
+
+	expectedCardCount = uint8(10)
+	actualCardCount = game.players[0].cardCount
+
+	if expectedCardCount != actualCardCount {
+		t.Errorf("expected cardCount of %d, actual: %d", expectedCardCount, actualCardCount)
+	}
+
+	expected = []Card{
+		{value: 4, suit: Spades},
+	}
+
+	game.SetPlayer(1, 0, 1, expected)
+
+	err = game.Discard(1, spadesAce)
+	if err == nil {
+		t.Error("expected error but did not receive one")
+	}
+
+	actual = game.players[1].hand
+
+	if err := compareHand(actual, expected); err != nil {
+		t.Error(err)
+	}
+
+	spadesFour := Card{true, true, Spades, 4}
+	err = game.Discard(1, spadesFour)
+	if err != nil {
+		t.Error("expected no error, but returned one")
+	}
+
+	actual = game.players[1].hand
+	expected = []Card{}
+	if err := compareHand(actual, expected); err != nil {
+		t.Error(err)
+	}
+
+	err = game.Discard(1, spadesFour)
+	if err == nil {
+		t.Error("expected error but did not receive one")
+	}
+}
+
+func TestDiscardAll(t *testing.T) {
+	game := New()
+
+	game.SetPlayer(0, 0, maxHandSize, cloneHand(handOne))
+	game.SetPlayer(1, 0, maxHandSize, cloneHand(handTwo))
+	game.SetPlayer(2, 0, maxHandSize, cloneHand(handThree))
+	game.SetPlayer(3, 0, maxHandSize, cloneHand(handFour))
+
+	game.PlayUp(0, handOne[0])
+	game.PlayUp(1, handTwo[0])
+	game.PlayUp(2, handThree[0])
+	game.PlayUp(3, handFour[0])
+
+	actualDiscarded := game.DiscardPlayed()
+
+	expectedDiscarded := []Card{
+		handOne[0],
+		handTwo[0],
+		handThree[0],
+		handFour[0],
+	}
+
+	for i := range expectedDiscarded {
+		expectedDiscarded[i].played = true
+		expectedDiscarded[i].exposed = true
+	}
+
+	if err := compareHand(actualDiscarded, expectedDiscarded); err != nil {
+		t.Error(err)
+	}
+
+	actualDiscarded = game.DiscardPlayed()
+	expectedDiscarded = []Card{}
+
+	if err := compareHand(actualDiscarded, expectedDiscarded); err != nil {
+		t.Error(err)
+	}
+}
+
 // PRIVATE HELPER FUNCTIONS
 
 func compareHand(actual []Card, expected []Card) error {
