@@ -22,20 +22,21 @@ func TestDeal(t *testing.T) {
 	}
 	deck := &d
 	expected := cloneHand(*deck)
-	
+
 	hand, err := Deal(0, deck)
 
 	if err != nil {
 		t.Error("expected no error, but returned one")
 	}
 
-	if err := compareHand(*deck, expected); err != nil {
-		t.Error(err)
+	if !handsEq(*deck, expected) {
+		t.Errorf("expected:\n%v\nfound:\n%v", expected, *deck)
+
 	}
 
 	expected = []Card{}
-	if err := compareHand(hand, expected); err != nil {
-		t.Error(err)
+	if !handsEq(hand, expected) {
+		t.Errorf("expected:\n%v\nfound:\n%v", expected, hand)
 	}
 
 	// test dealing 11
@@ -50,8 +51,8 @@ func TestDeal(t *testing.T) {
 		t.Error("expected no error, but returned one")
 	}
 
-	if err := compareHand(*deck, expected); err != nil {
-		t.Error(err)
+	if !handsEq(*deck, expected) {
+		t.Errorf("expected:\n%v\nfound:\n%v", expected, *deck)
 	}
 
 	expected = []Card{
@@ -68,8 +69,8 @@ func TestDeal(t *testing.T) {
 		{value: 13, suit: Clubs},
 	}
 
-	if err := compareHand(hand, expected); err != nil {
-		t.Error(err)
+	if !handsEq(hand, expected) {
+		t.Errorf("expected:\n%v\nfound:\n%v", expected, hand)
 	}
 
 	// test dealing to a zero card deck
@@ -81,8 +82,8 @@ func TestDeal(t *testing.T) {
 		t.Error("expected no error, but returned one")
 	}
 
-	if err := compareHand(*deck, expected); err != nil {
-		t.Error(err)
+	if !handsEq(*deck, expected) {
+		t.Errorf("expected:\n%v\nfound:\n%v", expected, *deck)
 	}
 
 	expected = []Card{
@@ -90,8 +91,8 @@ func TestDeal(t *testing.T) {
 		{value: 8, suit: Hearts},
 	}
 
-	if err := compareHand(hand, expected); err != nil {
-		t.Error(err)
+	if !handsEq(hand, expected) {
+		t.Errorf("expected:\n%v\nfound:\n%v", expected, hand)
 	}
 
 	// test error handling
@@ -103,11 +104,33 @@ func TestDeal(t *testing.T) {
 		t.Error("expected an error about deleting when not enough cards, but returned none")
 	}
 
-	if err := compareHand(*deck, expected); err != nil {
-		t.Error(err)
+	if !handsEq(*deck, expected) {
+		t.Errorf("expected:\n%v\nfound:\n%v", expected, *deck)
 	}
 
-	if err := compareHand(hand, expected); err != nil {
-		t.Error(err)
+	if !handsEq(hand, expected) {
+		t.Errorf("expected:\n%v\nfound:\n%v", expected, hand)
+	}
+}
+
+func Test_shuffle(t *testing.T) {
+	deck := cloneHand(handOne)
+
+	shuffle(deck)
+
+	if handsEq(deck, handOne) {
+		t.Error("Expected cards to be shuffled, but they are unchanged.")
+	}
+
+	deck2 := cloneHand(deck)
+
+	shuffle(deck)
+
+	if handsEq(deck2, deck) {
+		t.Error("Expected cards to be shuffled, but they are unchanged.")
+	}
+
+	if handsEq(deck2, handOne) {
+		t.Error("Expected cards to be shuffled, but they are unchanged.")
 	}
 }
