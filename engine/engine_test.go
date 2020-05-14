@@ -1,7 +1,6 @@
 package engine
 
 import (
-	"fmt"
 	"testing"
 )
 
@@ -108,10 +107,8 @@ func TestSetAndGet(t *testing.T) {
 		t.Error("should not be able to set a player who is already set")
 	}
 
-	err = compareHand(handOne, firstPlayer.hand)
-
-	if err != nil {
-		t.Error(err)
+	if !handsEq(handOne, firstPlayer.hand) {
+		t.Errorf("expected:\n\n%v\nfound:%v\n", handOne, firstPlayer.hand)
 	}
 
 	for i := 1; i < len(game.players); i++ {
@@ -196,9 +193,8 @@ func TestViewAs(t *testing.T) {
 		}
 
 		if i == playerThree {
-			err := compareHand(player.hand, handThree)
 
-			if err != nil {
+			if !handsEq(player.hand, handThree) {
 				t.Errorf("expected:\n\n%v\nfound:%v\n", handThree, player.hand)
 			}
 
@@ -251,8 +247,8 @@ func TestDiscard(t *testing.T) {
 
 	actual := game.players[0].hand
 
-	if err := compareHand(actual, expected); err != nil {
-		t.Error(err)
+	if !handsEq(actual, expected) {
+		t.Errorf("expected:\n%v\nfound:\n%v", expected, actual)
 	}
 
 	expectedCardCount := uint8(12)
@@ -285,8 +281,8 @@ func TestDiscard(t *testing.T) {
 
 	actual = game.players[0].hand
 
-	if err := compareHand(actual, expected); err != nil {
-		t.Error(err)
+	if !handsEq(actual, expected) {
+		t.Errorf("expected:\n%v\nfound:\n%v", expected, actual)
 	}
 
 	expectedCardCount = uint8(11)
@@ -314,8 +310,8 @@ func TestDiscard(t *testing.T) {
 
 	actual = game.players[0].hand
 
-	if err := compareHand(actual, expected); err != nil {
-		t.Error(err)
+	if !handsEq(actual, expected) {
+		t.Errorf("expected:\n%v\nfound:\n%v", expected, actual)
 	}
 
 	expectedCardCount = uint8(10)
@@ -338,8 +334,8 @@ func TestDiscard(t *testing.T) {
 
 	actual = game.players[1].hand
 
-	if err := compareHand(actual, expected); err != nil {
-		t.Error(err)
+	if !handsEq(actual, expected) {
+		t.Errorf("expected:\n%v\nfound:\n%v", expected, actual)
 	}
 
 	spadesFour := Card{true, true, Spades, 4}
@@ -350,8 +346,8 @@ func TestDiscard(t *testing.T) {
 
 	actual = game.players[1].hand
 	expected = []Card{}
-	if err := compareHand(actual, expected); err != nil {
-		t.Error(err)
+	if !handsEq(actual, expected) {
+		t.Errorf("expected:\n%v\nfound:\n%v", expected, actual)
 	}
 
 	err = game.Discard(1, spadesFour)
@@ -387,34 +383,35 @@ func TestDiscardAll(t *testing.T) {
 		expectedDiscarded[i].exposed = true
 	}
 
-	if err := compareHand(actualDiscarded, expectedDiscarded); err != nil {
-		t.Error(err)
+	if !handsEq(actualDiscarded, expectedDiscarded) {
+		t.Errorf("expected:\n%v\nfound:\n%v", expectedDiscarded, actualDiscarded)
+
 	}
 
 	actualDiscarded = game.DiscardPlayed()
 	expectedDiscarded = []Card{}
 
-	if err := compareHand(actualDiscarded, expectedDiscarded); err != nil {
-		t.Error(err)
+	if !handsEq(actualDiscarded, expectedDiscarded) {
+		t.Errorf("expected:\n%v\nfound:\n%v", expectedDiscarded, actualDiscarded)
 	}
 }
 
 // PRIVATE HELPER FUNCTIONS
 
-func compareHand(actual []Card, expected []Card) error {
+func handsEq(actual []Card, expected []Card) bool {
 	// If the lengths don't match, they must be different.
 	if len(actual) != len(expected) {
-		return fmt.Errorf("expected:\n%v\nfound:\n%v", expected, actual)
+		return false
 	}
 
 	// If each card matches, and the length is the same, they must match.
 	for i, card := range actual {
 		if card != expected[i] {
-			return fmt.Errorf("expected:\n%v\nfound:\n%v", expected[i], card)
+			return false
 		}
 	}
 
-	return nil
+	return true
 }
 
 // Even though arrays can be copied by value, an array of struct is an array
