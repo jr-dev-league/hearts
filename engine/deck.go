@@ -12,6 +12,6 @@ func Deal (numDealt uint, deck *[]Card) (hand []Card, err error) {
 		return hand, errors.New("Deal: not enough cards in deck")
 	}
 	hand = d[:numDealt]
-	d= d[numDealt:]
+	*deck = d[numDealt:]
 	return
 }
