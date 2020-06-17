@@ -32,9 +32,12 @@ type Player struct {
 
 // A State represents the complete game state
 type State struct {
-	broken    bool
-	players   [4]Player
-	readonly  bool
-	shootable bool
-	takenLast uint8
+	broken     bool
+	players    [4]Player
+	readonly   bool
+	shootable  bool
+	takenLast  uint8
+	handNumber uint8
 }
+
+// TODO put played card, passed cards, and hand number into tests

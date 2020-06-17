@@ -74,20 +74,18 @@ var handFour = []Card{
 }
 
 func TestNewGameState(t *testing.T) {
-	game := New()
-	_, err := game.Player(0)
+	game := NewGame()
 
 	for i := range game.players {
-		_, err = game.Player(uint8(i))
+		_, err := game.Player(uint8(i))
 		if err == nil {
 			t.Error("should not be able to get an unset hand")
 		}
 	}
-
 }
 
 func TestSetAndGet(t *testing.T) {
-	game := New()
+	game := NewGame()
 
 	err := game.SetPlayer(0, 0, maxHandSize, cloneHand(handOne))
 
@@ -122,7 +120,7 @@ func TestSetAndGet(t *testing.T) {
 }
 
 func TestPlayCard(t *testing.T) {
-	game := New()
+	game := NewGame()
 	cardIndex := 3
 
 	game.SetPlayer(0, 0, maxHandSize, cloneHand(handOne))
@@ -166,7 +164,7 @@ func TestPlayCard(t *testing.T) {
 }
 
 func TestViewAs(t *testing.T) {
-	game := New()
+	game := NewGame()
 
 	game.SetPlayer(0, 0, maxHandSize, cloneHand(handOne))
 	game.SetPlayer(1, 0, maxHandSize, cloneHand(handTwo))
@@ -220,7 +218,7 @@ func TestViewAs(t *testing.T) {
 }
 
 func TestDiscard(t *testing.T) {
-	game := New()
+	game := NewGame()
 
 	game.SetPlayer(0, 0, maxHandSize, cloneHand(handOne))
 
@@ -357,7 +355,7 @@ func TestDiscard(t *testing.T) {
 }
 
 func TestDiscardAll(t *testing.T) {
-	game := New()
+	game := NewGame()
 
 	game.SetPlayer(0, 0, maxHandSize, cloneHand(handOne))
 	game.SetPlayer(1, 0, maxHandSize, cloneHand(handTwo))
