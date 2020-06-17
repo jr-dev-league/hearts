@@ -2,7 +2,7 @@ package engine
 
 import "errors"
 
-// New creates a new game status
+// NewGame creates a new game status
 func NewGame() State {
 	game := State{
 		broken:    false,
@@ -42,7 +42,7 @@ func (game *State) Player(i uint8) (*Player, error) {
 		return nil, errors.New("this player had not been set")
 	}
 
-	return &game.players[i], nil
+	return game.Player(i)
 }
 
 // ViewAs returns a game state as known by a given (by index) player
@@ -100,6 +100,7 @@ func (game *State) PlayUp(p uint8, c Card) error {
 }
 
 // Discard deletes a card from the hand of the player p
+// TODO make private revamp functionality.
 func (game *State) Discard(p uint8, card Card) error {
 	pl, err := game.Player(p)
 	if err != nil {

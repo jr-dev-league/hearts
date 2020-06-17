@@ -25,7 +25,12 @@ type Card struct {
 type Player struct {
 	cardCount uint8
 	hand      []Card
-	points    int8
+	points    uint
+	/*
+		// TODO: add round points and total points
+		roundPoints int8
+		totalPoints int8
+	*/
 
 	// TODO: add tests (now just to document)
 	playedCard  Card
