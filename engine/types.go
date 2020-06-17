@@ -23,9 +23,11 @@ type Card struct {
 
 // A Player represents the hand and round score of a player
 type Player struct {
-	cardCount uint8
-	hand      []Card
-	points    int8
+	cardCount   uint8
+	hand        []Card
+	points      int8
+	playedCard  Card
+	passedCards [3]Card
 }
 
 // A State represents the complete game state
