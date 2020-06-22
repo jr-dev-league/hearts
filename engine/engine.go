@@ -111,6 +111,11 @@ func (game *State) Discard(p uint8, card Card) error {
 	return err
 }
 
+// Deal returns 4 hands
+func (game *State) Deal() {
+	// take the stdDeck and copy it, shuffle into new var, deal new suffle deck into each game player hand
+}
+
 // DiscardPlayed played deletes all cards from the game that have been played,
 // and returns a slice of the cards deleted in this way
 func (game *State) DiscardPlayed() (stack []Card) {
@@ -128,12 +133,12 @@ func (game *State) DiscardPlayed() (stack []Card) {
 
 // PRIVATE HELPER FUNCTIONS
 
-// discard (lowercase) is a helper method to call on a player to remove a 
+// discard (lowercase) is a helper method to call on a player to remove a
 // card at index i in their hand
 func (player *Player) discard(i int, card Card) {
 	player.hand = append(player.hand[:i], player.hand[i+1:]...)
 	player.cardCount--
-} 
+}
 
 // findCard searches a given hand for a card. Returns the card index if found
 // and an error if not.

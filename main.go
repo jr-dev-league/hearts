@@ -6,7 +6,7 @@ import (
 )
 
 func main() {
-	http.HandleFunc("/api/games", games)
+	http.HandleFunc("/api/games", gameHandlers)
 
 	err := http.ListenAndServe(":3000", nil)
 

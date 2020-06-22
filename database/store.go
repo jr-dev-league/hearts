@@ -1,6 +1,10 @@
 package database
 
-import "sync"
+import (
+	"sync"
+
+	"github.com/nolwn/hearts/pkg"
+)
 
 var once sync.Once
 var (
@@ -11,57 +15,57 @@ var (
 func Connection() *Store {
 
 	once.Do(func() {
-		database = Store{games: make(map[int]GameRecord)}
+		database = Store{games: make(map[int]pkg.GameRecord)}
 
-		database.games[0] = GameRecord{
+		database.games[0] = pkg.GameRecord{
 			ID: 0,
-			Players: [4]Player{
+			Players: [4]pkg.Player{
 				{
-					Hand: []Card{
-						{Suit: Spades, Value: 10},
-						{Suit: Spades, Value: 12},
-						{Suit: Hearts, Value: 0},
+					Hand: []pkg.Card{
+						{Suit: pkg.Spades, Value: 10},
+						{Suit: pkg.Spades, Value: 12},
+						{Suit: pkg.Hearts, Value: 0},
 					},
 					Play:   false,
-					Played: Card{},
+					Played: pkg.Card{},
 					Pass:   false,
-					Passed: []Card{},
+					Passed: []pkg.Card{},
 					Score:  100,
 				},
 				{
-					Hand: []Card{
-						{Suit: Clubs, Value: 2},
-						{Suit: Spades, Value: 1},
-						{Suit: Diamonds, Value: 0},
+					Hand: []pkg.Card{
+						{Suit: pkg.Clubs, Value: 2},
+						{Suit: pkg.Spades, Value: 1},
+						{Suit: pkg.Diamonds, Value: 0},
 					},
 					Play:   true,
-					Played: Card{},
+					Played: pkg.Card{},
 					Pass:   false,
-					Passed: []Card{},
+					Passed: []pkg.Card{},
 					Score:  100,
 				},
 				{
-					Hand: []Card{
-						{Suit: Hearts, Value: 11},
-						{Suit: Hearts, Value: 6},
-						{Suit: Diamonds, Value: 8},
+					Hand: []pkg.Card{
+						{Suit: pkg.Hearts, Value: 11},
+						{Suit: pkg.Hearts, Value: 6},
+						{Suit: pkg.Diamonds, Value: 8},
 					},
 					Play:   false,
-					Played: Card{},
+					Played: pkg.Card{},
 					Pass:   false,
-					Passed: []Card{},
+					Passed: []pkg.Card{},
 					Score:  100,
 				},
 				{
-					Hand: []Card{
-						{Suit: Diamonds, Value: 1},
-						{Suit: Diamonds, Value: 9},
-						{Suit: Hearts, Value: 4},
+					Hand: []pkg.Card{
+						{Suit: pkg.Diamonds, Value: 1},
+						{Suit: pkg.Diamonds, Value: 9},
+						{Suit: pkg.Hearts, Value: 4},
 					},
 					Play:   false,
-					Played: Card{},
+					Played: pkg.Card{},
 					Pass:   false,
-					Passed: []Card{},
+					Passed: []pkg.Card{},
 					Score:  100,
 				},
 			},
@@ -71,14 +75,15 @@ func Connection() *Store {
 	return &database
 }
 
-// AddGame adds a game record to a given store
-func (s *Store) AddGame(gr GameRecord) {
-	s.games[gr.ID] = gr
+// AddGame adds a game record to a given pkg.
+func (s *Store) AddGame(gd pkg.GameData) (ID int) {
+	ID = 3
+	return ID
 }
 
 // Games returns all games. You aren't supposed to call it "getGames" because Go is opinionated about weird shit.
-func (s *Store) Games() []GameRecord {
-	games := []GameRecord{}
+func (s *Store) Games() []pkg.GameRecord {
+	games := []pkg.GameRecord{}
 
 	for _, game := range s.games {
 		games = append(games, game)
@@ -88,5 +93,5 @@ func (s *Store) Games() []GameRecord {
 }
 
 func newStore() Store {
-	return Store{games: make(map[int]GameRecord)}
+	return Store{games: make(map[int]pkg.GameRecord)}
 }
