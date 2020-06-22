@@ -95,6 +95,11 @@ func (game *State) PlayUp(p uint8, c Card) error {
 	return nil
 }
 
+// Deal shuffles a deck of cards and deals it out to each player.
+func (game *State) Deal() error {
+	return errors.New("not implemented")
+}
+
 // Discard deletes a card from the hand of the player p
 func (game *State) Discard(p uint8, card Card) error {
 	pl := &game.players[p]
@@ -128,12 +133,12 @@ func (game *State) DiscardPlayed() (stack []Card) {
 
 // PRIVATE HELPER FUNCTIONS
 
-// discard (lowercase) is a helper method to call on a player to remove a 
+// discard (lowercase) is a helper method to call on a player to remove a
 // card at index i in their hand
 func (player *Player) discard(i int, card Card) {
 	player.hand = append(player.hand[:i], player.hand[i+1:]...)
 	player.cardCount--
-} 
+}
 
 // findCard searches a given hand for a card. Returns the card index if found
 // and an error if not.

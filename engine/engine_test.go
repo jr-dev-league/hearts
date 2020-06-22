@@ -219,6 +219,51 @@ func TestViewAs(t *testing.T) {
 	}
 }
 
+func TestDeal(t *testing.T) {
+	game := New()
+
+	err := game.Deal()
+
+	const compareIdx = 1
+
+	var firstDeal []Card
+
+	if err != nil {
+		t.Error("Deal returned an unexpected error")
+	}
+
+	for i, player := range game.players {
+		if i == compareIdx {
+			firstDeal = player.hand
+		}
+
+		if len(player.hand) != 13 {
+			t.Errorf("expected hand length to be 13, recieved %d", len(player.hand))
+		}
+	}
+
+	err = game.Deal()
+
+	if err == nil {
+		t.Error("expected Deal to throw an error, but it did not")
+	}
+
+	game = New()
+	game.Deal()
+
+	for i, player := range game.players {
+		if i == compareIdx {
+			if handsEq(player.hand, firstDeal) {
+				t.Error("shuffle should shuffle hands")
+			}
+		}
+
+		if len(player.hand) != 13 {
+			t.Errorf("expected hand length to be 13, recieved %d", len(player.hand))
+		}
+	}
+}
+
 func TestDiscard(t *testing.T) {
 	game := New()
 

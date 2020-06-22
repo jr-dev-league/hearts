@@ -2,7 +2,7 @@ package engine
 
 import "testing"
 
-func TestDeal(t *testing.T) {
+func TestDealHand(t *testing.T) {
 
 	// test dealing 0
 	d := []Card{
@@ -23,7 +23,7 @@ func TestDeal(t *testing.T) {
 	deck := &d
 	expected := cloneHand(*deck)
 
-	hand, err := deal(0, deck)
+	hand, err := dealHand(0, deck)
 
 	if err != nil {
 		t.Error("expected no error, but returned one")
@@ -45,7 +45,7 @@ func TestDeal(t *testing.T) {
 		{value: 8, suit: Hearts},
 	}
 
-	hand, err = deal(11, deck)
+	hand, err = dealHand(11, deck)
 
 	if err != nil {
 		t.Error("expected no error, but returned one")
@@ -76,7 +76,7 @@ func TestDeal(t *testing.T) {
 	// test dealing to a zero card deck
 	expected = []Card{}
 
-	hand, err = deal(2, deck)
+	hand, err = dealHand(2, deck)
 
 	if err != nil {
 		t.Error("expected no error, but returned one")
@@ -98,7 +98,7 @@ func TestDeal(t *testing.T) {
 	// test error handling
 	expected = []Card{}
 
-	hand, err = deal(2, deck)
+	hand, err = dealHand(2, deck)
 
 	if err == nil {
 		t.Error("expected an error about deleting when not enough cards, but returned none")
