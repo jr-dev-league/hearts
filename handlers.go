@@ -3,7 +3,7 @@ package main
 import (
 	"net/http"
 
-	"github.com/nolwn/hearts/database"
+	"github.com/jr-dev-league/hearts/database"
 )
 
 func games(w http.ResponseWriter, req *http.Request) {
