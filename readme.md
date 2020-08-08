@@ -2,18 +2,18 @@
 
 ## Outline
 
-- User can view a list of available seats from the homepage
-- User can select a seat and join a game
-- Game starts when all users are seated
-- User can play a full game of hearts with other players
-- The user's view of the game updates automatically
+- [ ] User can view a list of available seats from the homepage
+- [ ] User can select a seat and join a game
+- [ ] Game starts when all users are seated
+- [ ] User can play a full game of hearts with other players
+- [ ] The user's view of the game updates automatically
 
 ## Technical Overview
 
-- Games are played in memory, no need for a db in v1
-- Users cannot log in, but web app session should remember their seat
-- Hearts games should be complete and contain all game rules
-- Automatic game updates can be done via polling
+- [ ] Games are played in memory, no need for a db in v1
+- [ ] Users cannot log in, but web app session should remember their seat
+- [ ] Hearts games should be complete and contain all game rules
+- [ ] Automatic game updates can be done via polling
 
 ## Backend
 
@@ -26,9 +26,9 @@ will use the net/http package.
 The game resource manages the state of the game. Requests to this resource
 do things like:
 
-- Get the state of the game
-- Get the state of the game for a particular player
-- Play a card from a players hand
+- [ ] Get the state of the game
+- [ ] Get the state of the game for a particular player
+- [ ] Play a card from a players hand
 
 #### /api/games
 
