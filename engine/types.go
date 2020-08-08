@@ -25,7 +25,16 @@ type Card struct {
 type Player struct {
 	cardCount uint8
 	hand      []Card
-	points    int8
+	points    uint
+	/*
+		// TODO: add round points and total points
+		roundPoints int8
+		totalPoints int8
+	*/
+
+	// TODO: add tests (now just to document)
+	playedCard  Card
+	passedCards [3]Card
 }
 
 // A State represents the complete game state
@@ -35,4 +44,7 @@ type State struct {
 	readonly  bool
 	shootable bool
 	takenLast uint8
+
+	// TODO: add tests (now just to document)
+	handNumber uint8
 }

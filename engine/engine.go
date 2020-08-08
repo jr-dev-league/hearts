@@ -2,8 +2,8 @@ package engine
 
 import "errors"
 
-// New creates a new game status
-func New() State {
+// NewGame creates a new game status
+func NewGame() State {
 	game := State{
 		broken:    false,
 		players:   [4]Player{},
@@ -25,7 +25,11 @@ func (game *State) SetPlayer(i uint8, points int8, cardCount uint8, hand []Card)
 		return errors.New("this player has already been set")
 	}
 
-	game.players[i] = Player{cardCount, hand, points}
+	// TODO: rewrite to right values?
+	card := Card{}
+	cards := [3]Card{}
+
+	game.players[i] = Player{cardCount, hand, points, card, cards}
 
 	return nil
 }
@@ -38,15 +42,15 @@ func (game *State) Player(i uint8) (*Player, error) {
 		return nil, errors.New("this player had not been set")
 	}
 
-	return &game.players[i], nil
+	return game.Player(i)
 }
 
 // ViewAs returns a game state as known by a given (by index) player
 func (game *State) ViewAs(p uint8) State {
-	view := New()
+	view := NewGame()
 
 	for i := uint8(0); i < uint8(len(game.players)); i++ {
-		player := &game.players[i]
+		player, _ := game.Player(i)
 		if i == p {
 			view.SetPlayer(i, player.points, maxHandSize, player.hand)
 		} else {
@@ -96,8 +100,13 @@ func (game *State) PlayUp(p uint8, c Card) error {
 }
 
 // Discard deletes a card from the hand of the player p
+// TODO make private revamp functionality.
 func (game *State) Discard(p uint8, card Card) error {
-	pl := &game.players[p]
+	pl, err := game.Player(p)
+	if err != nil {
+		return errors.New("engine.Game.Discard: card not found")
+	}
+
 	i, err := findCard(pl.hand, card)
 
 	if err != nil {
@@ -115,7 +124,7 @@ func (game *State) Discard(p uint8, card Card) error {
 // and returns a slice of the cards deleted in this way
 func (game *State) DiscardPlayed() (stack []Card) {
 	for p := range game.players {
-		pl := &game.players[p]
+		pl, _ := game.Player(uint8(p))
 		for i, card := range pl.hand {
 			if card.played == true {
 				pl.discard(i, card)
@@ -128,12 +137,12 @@ func (game *State) DiscardPlayed() (stack []Card) {
 
 // PRIVATE HELPER FUNCTIONS
 
-// discard (lowercase) is a helper method to call on a player to remove a 
+// discard (lowercase) is a helper method to call on a player to remove a
 // card at index i in their hand
 func (player *Player) discard(i int, card Card) {
 	player.hand = append(player.hand[:i], player.hand[i+1:]...)
 	player.cardCount--
-} 
+}
 
 // findCard searches a given hand for a card. Returns the card index if found
 // and an error if not.
