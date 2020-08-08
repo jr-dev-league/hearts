@@ -3,8 +3,8 @@ package engine
 import "errors"
 
 // New creates a new game status
-func New() State {
-	game := State{
+func New() (game State) {
+	game = State{
 		broken:    false,
 		players:   [4]Player{},
 		takenLast: 4,
@@ -12,7 +12,7 @@ func New() State {
 		readonly:  false,
 	}
 
-	return game
+	return
 }
 
 // SetPlayer sets a player at the given index
@@ -42,8 +42,8 @@ func (game *State) Player(i uint8) (*Player, error) {
 }
 
 // ViewAs returns a game state as known by a given (by index) player
-func (game *State) ViewAs(p uint8) State {
-	view := New()
+func (game *State) ViewAs(p uint8) (view State) {
+	view = New()
 
 	for i := uint8(0); i < uint8(len(game.players)); i++ {
 		player := &game.players[i]
@@ -65,7 +65,8 @@ func (game *State) ViewAs(p uint8) State {
 	}
 
 	view.readonly = true
-	return view
+
+	return
 }
 
 // PlayUp plays one card face up by player index, p, and card index, c.
@@ -97,7 +98,26 @@ func (game *State) PlayUp(p uint8, c Card) error {
 
 // Deal shuffles a deck of cards and deals it out to each player.
 func (game *State) Deal() error {
-	return errors.New("not implemented")
+	deck := stdDeck()
+
+	shuffle(deck)
+
+	for i := 0; i < len(game.players); i++ {
+		player := &game.players[i]
+		if len(player.hand) > 0 {
+			return errors.New("one or more players already has cards")
+		}
+
+		hand, err := dealHand(13, &deck)
+
+		if err != nil {
+			return err
+		}
+
+		player.hand = hand
+	}
+
+	return nil
 }
 
 // Discard deletes a card from the hand of the player p
@@ -128,7 +148,8 @@ func (game *State) DiscardPlayed() (stack []Card) {
 			}
 		}
 	}
-	return stack
+
+	return
 }
 
 // PRIVATE HELPER FUNCTIONS

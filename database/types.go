@@ -27,7 +27,7 @@ type Player struct {
 	Score  int    `json:"score"`
 }
 
-// GameRecord reprsents a game as it exists in the "database."
+// GameRecord represents a game as it exists in the "database."
 type GameRecord struct {
 	ID      int       `json:"id"`
 	Players [4]Player `json:"players"`

@@ -113,7 +113,7 @@ func TestDealHand(t *testing.T) {
 	}
 }
 
-func Test_shuffle(t *testing.T) {
+func TestShuffle(t *testing.T) {
 	deck := cloneHand(handOne)
 
 	shuffle(deck)

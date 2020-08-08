@@ -199,7 +199,7 @@ func TestViewAs(t *testing.T) {
 			}
 
 		} else if len(player.hand) != 0 {
-			t.Errorf("oppenent hands should not be viewable. saw %v", player.hand)
+			t.Errorf("opponent hands should not be viewable. saw %v", player.hand)
 		}
 	}
 
@@ -238,7 +238,7 @@ func TestDeal(t *testing.T) {
 		}
 
 		if len(player.hand) != 13 {
-			t.Errorf("expected hand length to be 13, recieved %d", len(player.hand))
+			t.Errorf("expected hand length to be 13, received %d", len(player.hand))
 		}
 	}
 
@@ -259,7 +259,7 @@ func TestDeal(t *testing.T) {
 		}
 
 		if len(player.hand) != 13 {
-			t.Errorf("expected hand length to be 13, recieved %d", len(player.hand))
+			t.Errorf("expected hand length to be 13, received %d", len(player.hand))
 		}
 	}
 }

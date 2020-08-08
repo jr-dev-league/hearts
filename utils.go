@@ -6,7 +6,7 @@ import (
 	"net/http"
 )
 
-func encodeResponse(w http.ResponseWriter, req *http.Request, i interface{}, code int) ([]byte, error) {
+func writeResponse(w http.ResponseWriter, req *http.Request, i interface{}, code int) ([]byte, error) {
 	bytes, err := json.Marshal(i)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
