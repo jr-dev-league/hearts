@@ -6,19 +6,19 @@ func TestDealHand(t *testing.T) {
 
 	// test dealing 0
 	d := []Card{
-		{value: 0, suit: Spades},
-		{value: 4, suit: Spades},
-		{value: 9, suit: Spades},
-		{value: 0, suit: Diamonds},
-		{value: 1, suit: Diamonds},
-		{value: 3, suit: Diamonds},
-		{value: 5, suit: Diamonds},
-		{value: 9, suit: Diamonds},
-		{value: 1, suit: Clubs},
-		{value: 2, suit: Clubs},
-		{value: 13, suit: Clubs},
-		{value: 0, suit: Hearts},
-		{value: 8, suit: Hearts},
+		{Value: 0, Suit: Spades},
+		{Value: 4, Suit: Spades},
+		{Value: 9, Suit: Spades},
+		{Value: 0, Suit: Diamonds},
+		{Value: 1, Suit: Diamonds},
+		{Value: 3, Suit: Diamonds},
+		{Value: 5, Suit: Diamonds},
+		{Value: 9, Suit: Diamonds},
+		{Value: 1, Suit: Clubs},
+		{Value: 2, Suit: Clubs},
+		{Value: 13, Suit: Clubs},
+		{Value: 0, Suit: Hearts},
+		{Value: 8, Suit: Hearts},
 	}
 	deck := &d
 	expected := cloneHand(*deck)
@@ -41,8 +41,8 @@ func TestDealHand(t *testing.T) {
 
 	// test dealing 11
 	expected = []Card{
-		{value: 0, suit: Hearts},
-		{value: 8, suit: Hearts},
+		{Value: 0, Suit: Hearts},
+		{Value: 8, Suit: Hearts},
 	}
 
 	hand, err = dealHand(11, deck)
@@ -56,17 +56,17 @@ func TestDealHand(t *testing.T) {
 	}
 
 	expected = []Card{
-		{value: 0, suit: Spades},
-		{value: 4, suit: Spades},
-		{value: 9, suit: Spades},
-		{value: 0, suit: Diamonds},
-		{value: 1, suit: Diamonds},
-		{value: 3, suit: Diamonds},
-		{value: 5, suit: Diamonds},
-		{value: 9, suit: Diamonds},
-		{value: 1, suit: Clubs},
-		{value: 2, suit: Clubs},
-		{value: 13, suit: Clubs},
+		{Value: 0, Suit: Spades},
+		{Value: 4, Suit: Spades},
+		{Value: 9, Suit: Spades},
+		{Value: 0, Suit: Diamonds},
+		{Value: 1, Suit: Diamonds},
+		{Value: 3, Suit: Diamonds},
+		{Value: 5, Suit: Diamonds},
+		{Value: 9, Suit: Diamonds},
+		{Value: 1, Suit: Clubs},
+		{Value: 2, Suit: Clubs},
+		{Value: 13, Suit: Clubs},
 	}
 
 	if !handsEq(hand, expected) {
@@ -87,8 +87,8 @@ func TestDealHand(t *testing.T) {
 	}
 
 	expected = []Card{
-		{value: 0, suit: Hearts},
-		{value: 8, suit: Hearts},
+		{Value: 0, Suit: Hearts},
+		{Value: 8, Suit: Hearts},
 	}
 
 	if !handsEq(hand, expected) {

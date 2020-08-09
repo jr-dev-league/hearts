@@ -3,17 +3,18 @@ package database
 import "sync"
 
 var once sync.Once
+var database Store
 var (
-	database Store
+	gamesTable = "games"
 )
 
 // Connection gives you a "connection" to the "database."
 func Connection() *Store {
 
 	once.Do(func() {
-		database = Store{games: make(map[int]GameRecord)}
+		database = Store{games: gameTable{counter: 1, data: make(map[int]GameRecord)}}
 
-		database.games[0] = GameRecord{
+		database.games.data[0] = GameRecord{
 			ID: 0,
 			Players: [4]Player{
 				{
@@ -22,9 +23,7 @@ func Connection() *Store {
 						{Suit: Spades, Value: 12},
 						{Suit: Hearts, Value: 0},
 					},
-					Play:   false,
 					Played: Card{},
-					Pass:   false,
 					Passed: []Card{},
 					Score:  100,
 				},
@@ -34,9 +33,7 @@ func Connection() *Store {
 						{Suit: Spades, Value: 1},
 						{Suit: Diamonds, Value: 0},
 					},
-					Play:   true,
 					Played: Card{},
-					Pass:   false,
 					Passed: []Card{},
 					Score:  100,
 				},
@@ -46,9 +43,7 @@ func Connection() *Store {
 						{Suit: Hearts, Value: 6},
 						{Suit: Diamonds, Value: 8},
 					},
-					Play:   false,
 					Played: Card{},
-					Pass:   false,
 					Passed: []Card{},
 					Score:  100,
 				},
@@ -58,13 +53,13 @@ func Connection() *Store {
 						{Suit: Diamonds, Value: 9},
 						{Suit: Hearts, Value: 4},
 					},
-					Play:   false,
 					Played: Card{},
-					Pass:   false,
 					Passed: []Card{},
 					Score:  100,
 				},
 			},
+			Type: "trick",
+			Turn: 1,
 		}
 	})
 
@@ -72,21 +67,37 @@ func Connection() *Store {
 }
 
 // AddGame adds a game record to a given store
-func (s *Store) AddGame(gr GameRecord) {
-	s.games[gr.ID] = gr
+func (s *Store) AddGame(data GameData) (record GameRecord) {
+	record = GameRecord{
+		ID:      generateID(gamesTable),
+		Players: data.Players,
+	}
+
+	s.games.data[record.ID] = record
+
+	return record
 }
 
 // Games returns all games. You aren't supposed to call it "getGames" because Go is opinionated about weird shit.
 func (s *Store) Games() []GameRecord {
 	games := []GameRecord{}
 
-	for _, game := range s.games {
+	for _, game := range s.games.data {
 		games = append(games, game)
 	}
 
 	return games
 }
 
-func newStore() Store {
-	return Store{games: make(map[int]GameRecord)}
+func generateID(table string) (ID int) {
+	switch table {
+	case "games":
+		return generateGameID()
+	}
+	return 0
+}
+
+func generateGameID() int {
+	database.games.counter++
+	return database.games.counter
 }

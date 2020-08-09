@@ -12,72 +12,72 @@ const (
 )
 
 var handOne = []Card{
-	{value: 0, suit: Spades},
-	{value: 4, suit: Spades},
-	{value: 9, suit: Spades},
-	{value: 0, suit: Diamonds},
-	{value: 1, suit: Diamonds},
-	{value: 3, suit: Diamonds},
-	{value: 5, suit: Diamonds},
-	{value: 9, suit: Diamonds},
-	{value: 1, suit: Clubs},
-	{value: 2, suit: Clubs},
-	{value: 13, suit: Clubs},
-	{value: 0, suit: Hearts},
-	{value: 8, suit: Hearts},
+	{Value: 0, Suit: Spades},
+	{Value: 4, Suit: Spades},
+	{Value: 9, Suit: Spades},
+	{Value: 0, Suit: Diamonds},
+	{Value: 1, Suit: Diamonds},
+	{Value: 3, Suit: Diamonds},
+	{Value: 5, Suit: Diamonds},
+	{Value: 9, Suit: Diamonds},
+	{Value: 1, Suit: Clubs},
+	{Value: 2, Suit: Clubs},
+	{Value: 13, Suit: Clubs},
+	{Value: 0, Suit: Hearts},
+	{Value: 8, Suit: Hearts},
 }
 
 var handTwo = []Card{
-	{value: 1, suit: Spades},
-	{value: 8, suit: Diamonds},
-	{value: 12, suit: Diamonds},
-	{value: 0, suit: Clubs},
-	{value: 3, suit: Clubs},
-	{value: 4, suit: Clubs},
-	{value: 6, suit: Clubs},
-	{value: 7, suit: Clubs},
-	{value: 8, suit: Clubs},
-	{value: 1, suit: Hearts},
-	{value: 3, suit: Hearts},
-	{value: 4, suit: Hearts},
-	{value: 5, suit: Hearts},
+	{Value: 1, Suit: Spades},
+	{Value: 8, Suit: Diamonds},
+	{Value: 12, Suit: Diamonds},
+	{Value: 0, Suit: Clubs},
+	{Value: 3, Suit: Clubs},
+	{Value: 4, Suit: Clubs},
+	{Value: 6, Suit: Clubs},
+	{Value: 7, Suit: Clubs},
+	{Value: 8, Suit: Clubs},
+	{Value: 1, Suit: Hearts},
+	{Value: 3, Suit: Hearts},
+	{Value: 4, Suit: Hearts},
+	{Value: 5, Suit: Hearts},
 }
 var handThree = []Card{
-	{value: 2, suit: Spades},
-	{value: 5, suit: Spades},
-	{value: 4, suit: Spades},
-	{value: 6, suit: Hearts},
-	{value: 10, suit: Hearts},
-	{value: 11, suit: Clubs},
-	{value: 5, suit: Clubs},
-	{value: 9, suit: Clubs},
-	{value: 11, suit: Clubs},
-	{value: 6, suit: Clubs},
-	{value: 10, suit: Diamonds},
-	{value: 11, suit: Diamonds},
-	{value: 12, suit: Diamonds},
+	{Value: 2, Suit: Spades},
+	{Value: 5, Suit: Spades},
+	{Value: 4, Suit: Spades},
+	{Value: 6, Suit: Hearts},
+	{Value: 10, Suit: Hearts},
+	{Value: 11, Suit: Clubs},
+	{Value: 5, Suit: Clubs},
+	{Value: 9, Suit: Clubs},
+	{Value: 11, Suit: Clubs},
+	{Value: 6, Suit: Clubs},
+	{Value: 10, Suit: Diamonds},
+	{Value: 11, Suit: Diamonds},
+	{Value: 12, Suit: Diamonds},
 }
 var handFour = []Card{
-	{value: 3, suit: Spades},
-	{value: 7, suit: Spades},
-	{value: 7, suit: Spades},
-	{value: 8, suit: Spades},
-	{value: 10, suit: Spades},
-	{value: 11, suit: Spades},
-	{value: 12, suit: Spades},
-	{value: 2, suit: Diamonds},
-	{value: 7, suit: Diamonds},
-	{value: 10, suit: Diamonds},
-	{value: 2, suit: Hearts},
-	{value: 7, suit: Hearts},
-	{value: 9, suit: Hearts},
+	{Value: 3, Suit: Spades},
+	{Value: 7, Suit: Spades},
+	{Value: 7, Suit: Spades},
+	{Value: 8, Suit: Spades},
+	{Value: 10, Suit: Spades},
+	{Value: 11, Suit: Spades},
+	{Value: 12, Suit: Spades},
+	{Value: 2, Suit: Diamonds},
+	{Value: 7, Suit: Diamonds},
+	{Value: 10, Suit: Diamonds},
+	{Value: 2, Suit: Hearts},
+	{Value: 7, Suit: Hearts},
+	{Value: 9, Suit: Hearts},
 }
 
 func TestNewGameState(t *testing.T) {
 	game := New()
 	_, err := game.Player(0)
 
-	for i := range game.players {
+	for i := range game.Players {
 		_, err = game.Player(uint8(i))
 		if err == nil {
 			t.Error("should not be able to get an unset hand")
@@ -107,13 +107,13 @@ func TestSetAndGet(t *testing.T) {
 		t.Error("should not be able to set a player who is already set")
 	}
 
-	if !handsEq(handOne, firstPlayer.hand) {
-		t.Errorf("expected:\n\n%v\nfound:%v\n", handOne, firstPlayer.hand)
+	if !handsEq(handOne, firstPlayer.Hand) {
+		t.Errorf("expected:\n\n%v\nfound:%v\n", handOne, firstPlayer.Hand)
 	}
 
-	for i := 1; i < len(game.players); i++ {
-		player := game.players[i]
-		if player.points != 0 && player.hand != nil {
+	for i := 1; i < len(game.Players); i++ {
+		player := game.Players[i]
+		if player.Points != 0 && player.Hand != nil {
 			t.Error("players that were not set should have zeroed values")
 		} else if _, err := game.Player(uint8(i)); err == nil {
 			t.Error("should not be able to get players that are not set")
@@ -132,8 +132,8 @@ func TestPlayCard(t *testing.T) {
 
 	player, _ := game.Player(0)
 
-	for _, card := range player.hand {
-		if card.exposed || card.played {
+	for _, card := range player.Hand {
+		if card.Exposed || card.Played {
 			t.Error("Cards should be dealt unplayed and unexposed")
 		}
 	}
@@ -150,10 +150,10 @@ func TestPlayCard(t *testing.T) {
 		t.Error("should be able to play a card in player's hand")
 	}
 
-	for i, card := range player.hand {
-		if i == cardIndex && (!card.played || !card.exposed) {
+	for i, card := range player.Hand {
+		if i == cardIndex && (!card.Played || !card.Exposed) {
 			t.Error("cards should be be playable")
-		} else if i != cardIndex && (card.played || card.exposed) {
+		} else if i != cardIndex && (card.Played || card.Exposed) {
 			t.Error("only the selected card should be played")
 		}
 	}
@@ -187,19 +187,19 @@ func TestViewAs(t *testing.T) {
 		t.Error("should not be able to set players in a readonly state")
 	}
 
-	for i, player := range view.players {
-		if player.cardCount != maxHandSize {
+	for i, player := range view.Players {
+		if player.CardCount != maxHandSize {
 			t.Errorf("player %d should have %d cards", i, maxHandSize)
 		}
 
 		if i == playerThree {
 
-			if !handsEq(player.hand, handThree) {
-				t.Errorf("expected:\n\n%v\nfound:%v\n", handThree, player.hand)
+			if !handsEq(player.Hand, handThree) {
+				t.Errorf("expected:\n\n%v\nfound:%v\n", handThree, player.Hand)
 			}
 
-		} else if len(player.hand) != 0 {
-			t.Errorf("opponent hands should not be viewable. saw %v", player.hand)
+		} else if len(player.Hand) != 0 {
+			t.Errorf("opponent hands should not be viewable. saw %v", player.Hand)
 		}
 	}
 
@@ -208,13 +208,13 @@ func TestViewAs(t *testing.T) {
 	game.PlayUp(playerFour, playedCard)
 	view = game.ViewAs(playerThree)
 
-	if len(view.players[playerFour].hand) != 1 {
+	if len(view.Players[playerFour].Hand) != 1 {
 		t.Error("player should only have one visible card")
 	}
 
-	actual := view.players[playerFour].hand[0]
+	actual := view.Players[playerFour].Hand[0]
 
-	if actual.suit != playedCard.suit || actual.value != playedCard.value {
+	if actual.Suit != playedCard.Suit || actual.Value != playedCard.Value {
 		t.Error("the wrong card is showing")
 	}
 }
@@ -232,13 +232,13 @@ func TestDeal(t *testing.T) {
 		t.Error("Deal returned an unexpected error")
 	}
 
-	for i, player := range game.players {
+	for i, player := range game.Players {
 		if i == compareIdx {
-			firstDeal = player.hand
+			firstDeal = player.Hand
 		}
 
-		if len(player.hand) != 13 {
-			t.Errorf("expected hand length to be 13, received %d", len(player.hand))
+		if len(player.Hand) != 13 {
+			t.Errorf("expected hand length to be 13, received %d", len(player.Hand))
 		}
 	}
 
@@ -251,15 +251,15 @@ func TestDeal(t *testing.T) {
 	game = New()
 	game.Deal()
 
-	for i, player := range game.players {
+	for i, player := range game.Players {
 		if i == compareIdx {
-			if handsEq(player.hand, firstDeal) {
+			if handsEq(player.Hand, firstDeal) {
 				t.Error("shuffle should shuffle hands")
 			}
 		}
 
-		if len(player.hand) != 13 {
-			t.Errorf("expected hand length to be 13, received %d", len(player.hand))
+		if len(player.Hand) != 13 {
+			t.Errorf("expected hand length to be 13, received %d", len(player.Hand))
 		}
 	}
 }
@@ -276,28 +276,28 @@ func TestDiscard(t *testing.T) {
 	}
 
 	expected := []Card{
-		{value: 4, suit: Spades},
-		{value: 9, suit: Spades},
-		{value: 0, suit: Diamonds},
-		{value: 1, suit: Diamonds},
-		{value: 3, suit: Diamonds},
-		{value: 5, suit: Diamonds},
-		{value: 9, suit: Diamonds},
-		{value: 1, suit: Clubs},
-		{value: 2, suit: Clubs},
-		{value: 13, suit: Clubs},
-		{value: 0, suit: Hearts},
-		{value: 8, suit: Hearts},
+		{Value: 4, Suit: Spades},
+		{Value: 9, Suit: Spades},
+		{Value: 0, Suit: Diamonds},
+		{Value: 1, Suit: Diamonds},
+		{Value: 3, Suit: Diamonds},
+		{Value: 5, Suit: Diamonds},
+		{Value: 9, Suit: Diamonds},
+		{Value: 1, Suit: Clubs},
+		{Value: 2, Suit: Clubs},
+		{Value: 13, Suit: Clubs},
+		{Value: 0, Suit: Hearts},
+		{Value: 8, Suit: Hearts},
 	}
 
-	actual := game.players[0].hand
+	actual := game.Players[0].Hand
 
 	if !handsEq(actual, expected) {
 		t.Errorf("expected:\n%v\nfound:\n%v", expected, actual)
 	}
 
 	expectedCardCount := uint8(12)
-	actualCardCount := game.players[0].cardCount
+	actualCardCount := game.Players[0].CardCount
 
 	if expectedCardCount != actualCardCount {
 		t.Errorf("expected cardCount of %d, actual: %d", expectedCardCount, actualCardCount)
@@ -311,27 +311,27 @@ func TestDiscard(t *testing.T) {
 	}
 
 	expected = []Card{
-		{value: 4, suit: Spades},
-		{value: 9, suit: Spades},
-		{value: 0, suit: Diamonds},
-		{value: 1, suit: Diamonds},
-		{value: 3, suit: Diamonds},
-		{value: 5, suit: Diamonds},
-		{value: 9, suit: Diamonds},
-		{value: 1, suit: Clubs},
-		{value: 2, suit: Clubs},
-		{value: 13, suit: Clubs},
-		{value: 0, suit: Hearts},
+		{Value: 4, Suit: Spades},
+		{Value: 9, Suit: Spades},
+		{Value: 0, Suit: Diamonds},
+		{Value: 1, Suit: Diamonds},
+		{Value: 3, Suit: Diamonds},
+		{Value: 5, Suit: Diamonds},
+		{Value: 9, Suit: Diamonds},
+		{Value: 1, Suit: Clubs},
+		{Value: 2, Suit: Clubs},
+		{Value: 13, Suit: Clubs},
+		{Value: 0, Suit: Hearts},
 	}
 
-	actual = game.players[0].hand
+	actual = game.Players[0].Hand
 
 	if !handsEq(actual, expected) {
 		t.Errorf("expected:\n%v\nfound:\n%v", expected, actual)
 	}
 
 	expectedCardCount = uint8(11)
-	actualCardCount = game.players[0].cardCount
+	actualCardCount = game.Players[0].CardCount
 
 	if expectedCardCount != actualCardCount {
 		t.Errorf("expected cardCount of %d, actual: %d", expectedCardCount, actualCardCount)
@@ -341,33 +341,33 @@ func TestDiscard(t *testing.T) {
 	game.Discard(0, diamondsFive)
 
 	expected = []Card{
-		{value: 4, suit: Spades},
-		{value: 9, suit: Spades},
-		{value: 0, suit: Diamonds},
-		{value: 1, suit: Diamonds},
-		{value: 3, suit: Diamonds},
-		{value: 9, suit: Diamonds},
-		{value: 1, suit: Clubs},
-		{value: 2, suit: Clubs},
-		{value: 13, suit: Clubs},
-		{value: 0, suit: Hearts},
+		{Value: 4, Suit: Spades},
+		{Value: 9, Suit: Spades},
+		{Value: 0, Suit: Diamonds},
+		{Value: 1, Suit: Diamonds},
+		{Value: 3, Suit: Diamonds},
+		{Value: 9, Suit: Diamonds},
+		{Value: 1, Suit: Clubs},
+		{Value: 2, Suit: Clubs},
+		{Value: 13, Suit: Clubs},
+		{Value: 0, Suit: Hearts},
 	}
 
-	actual = game.players[0].hand
+	actual = game.Players[0].Hand
 
 	if !handsEq(actual, expected) {
 		t.Errorf("expected:\n%v\nfound:\n%v", expected, actual)
 	}
 
 	expectedCardCount = uint8(10)
-	actualCardCount = game.players[0].cardCount
+	actualCardCount = game.Players[0].CardCount
 
 	if expectedCardCount != actualCardCount {
 		t.Errorf("expected cardCount of %d, actual: %d", expectedCardCount, actualCardCount)
 	}
 
 	expected = []Card{
-		{value: 4, suit: Spades},
+		{Value: 4, Suit: Spades},
 	}
 
 	game.SetPlayer(1, 0, 1, expected)
@@ -377,7 +377,7 @@ func TestDiscard(t *testing.T) {
 		t.Error("expected error but did not receive one")
 	}
 
-	actual = game.players[1].hand
+	actual = game.Players[1].Hand
 
 	if !handsEq(actual, expected) {
 		t.Errorf("expected:\n%v\nfound:\n%v", expected, actual)
@@ -389,7 +389,7 @@ func TestDiscard(t *testing.T) {
 		t.Error("expected no error, but returned one")
 	}
 
-	actual = game.players[1].hand
+	actual = game.Players[1].Hand
 	expected = []Card{}
 	if !handsEq(actual, expected) {
 		t.Errorf("expected:\n%v\nfound:\n%v", expected, actual)
@@ -424,8 +424,8 @@ func TestDiscardAll(t *testing.T) {
 	}
 
 	for i := range expectedDiscarded {
-		expectedDiscarded[i].played = true
-		expectedDiscarded[i].exposed = true
+		expectedDiscarded[i].Played = true
+		expectedDiscarded[i].Exposed = true
 	}
 
 	if !handsEq(actualDiscarded, expectedDiscarded) {
@@ -468,10 +468,10 @@ func cloneHand(hand []Card) []Card {
 	for _, card := range hand {
 		cardClone := Card{}
 
-		cardClone.exposed = card.exposed
-		cardClone.played = card.played
-		cardClone.suit = card.suit
-		cardClone.value = card.value
+		cardClone.Exposed = card.Exposed
+		cardClone.Played = card.Played
+		cardClone.Suit = card.Suit
+		cardClone.Value = card.Value
 
 		clone = append(clone, cardClone)
 	}

@@ -6,23 +6,41 @@ import (
 	"github.com/jr-dev-league/hearts/database"
 )
 
-func games(w http.ResponseWriter, req *http.Request) {
+type gameResponse struct {
+	ID int "json:id"
+}
+
+type errorResponse struct {
+	statusCode int
+	message    string
+}
+
+func gamesHandler(w http.ResponseWriter, req *http.Request) {
 	switch req.Method {
 	case http.MethodGet:
-		getGames(w, req)
+		getGamesHandler(w, req)
 		// case http.MethodPost:
 		// 	createGame(w, req)
 	}
 }
 
-func getGames(w http.ResponseWriter, req *http.Request) {
-	store := database.Connection()
-	games := store.Games()
+func getGamesHandler(w http.ResponseWriter, req *http.Request) {
+	db := database.Connection()
+	games := db.Games()
 
-	writeResponse(w, req, games, 200)
+	writeResponse(w, req, games, http.StatusOK)
 }
 
-// func createGame(w http.ResponseWriter, req *http.Request) {
-// 	store := database.Connection()
-// 	newGame :=
-// }
+func createGameHandler(w http.ResponseWriter, req *http.Request) {
+	// newGame, err := createGame()
+	// resBody := gameResponse{ID: newGame.ID}
+
+	// if err != nil {
+	// 	statusCode := http.StatusInternalServerError
+	// 	message := "Internal Server Error."
+	// 	errBody := errorResponse{statusCode, message}
+	// 	writeResponse(w, req, errBody, http.StatusInternalServerError)
+	// }
+
+	// writeResponse(w, req, resBody, http.StatusCreated)
+}
