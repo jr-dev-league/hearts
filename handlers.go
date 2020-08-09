@@ -7,7 +7,7 @@ import (
 )
 
 type gameResponse struct {
-	ID int "json:id"
+	ID int `json:"ID"`
 }
 
 type errorResponse struct {
@@ -19,8 +19,8 @@ func gamesHandler(w http.ResponseWriter, req *http.Request) {
 	switch req.Method {
 	case http.MethodGet:
 		getGamesHandler(w, req)
-		// case http.MethodPost:
-		// 	createGame(w, req)
+	case http.MethodPost:
+		createGameHandler(w, req)
 	}
 }
 
@@ -32,15 +32,15 @@ func getGamesHandler(w http.ResponseWriter, req *http.Request) {
 }
 
 func createGameHandler(w http.ResponseWriter, req *http.Request) {
-	// newGame, err := createGame()
-	// resBody := gameResponse{ID: newGame.ID}
+	newGame, err := createGame()
+	resBody := gameResponse{ID: newGame.ID}
 
-	// if err != nil {
-	// 	statusCode := http.StatusInternalServerError
-	// 	message := "Internal Server Error."
-	// 	errBody := errorResponse{statusCode, message}
-	// 	writeResponse(w, req, errBody, http.StatusInternalServerError)
-	// }
+	if err != nil {
+		statusCode := http.StatusInternalServerError
+		message := "Internal Server Error."
+		errBody := errorResponse{statusCode, message}
+		writeResponse(w, req, errBody, http.StatusInternalServerError)
+	}
 
-	// writeResponse(w, req, resBody, http.StatusCreated)
+	writeResponse(w, req, resBody, http.StatusCreated)
 }

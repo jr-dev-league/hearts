@@ -23,8 +23,7 @@ func Connection() *Store {
 						{Suit: Spades, Value: 12},
 						{Suit: Hearts, Value: 0},
 					},
-					Played: Card{},
-					Passed: []Card{},
+					Active: []Card{},
 					Score:  100,
 				},
 				{
@@ -33,8 +32,7 @@ func Connection() *Store {
 						{Suit: Spades, Value: 1},
 						{Suit: Diamonds, Value: 0},
 					},
-					Played: Card{},
-					Passed: []Card{},
+					Active: []Card{},
 					Score:  100,
 				},
 				{
@@ -43,8 +41,7 @@ func Connection() *Store {
 						{Suit: Hearts, Value: 6},
 						{Suit: Diamonds, Value: 8},
 					},
-					Played: Card{},
-					Passed: []Card{},
+					Active: []Card{},
 					Score:  100,
 				},
 				{
@@ -53,24 +50,26 @@ func Connection() *Store {
 						{Suit: Diamonds, Value: 9},
 						{Suit: Hearts, Value: 4},
 					},
-					Played: Card{},
-					Passed: []Card{},
+					Active: []Card{},
 					Score:  100,
 				},
 			},
-			Type: "trick",
-			Turn: 1,
+			Phase:         "play",
+			Turn:          1,
+			PassDirection: "left",
 		}
 	})
 
 	return &database
 }
 
-// AddGame adds a game record to a given store
+// AddGame adds a game record to the store
 func (s *Store) AddGame(data GameData) (record GameRecord) {
 	record = GameRecord{
-		ID:      generateID(gamesTable),
-		Players: data.Players,
+		ID:            generateID(gamesTable),
+		Players:       data.Players,
+		PassDirection: data.PassDirection,
+		Phase:         data.Phase,
 	}
 
 	s.games.data[record.ID] = record
@@ -97,7 +96,9 @@ func generateID(table string) (ID int) {
 	return 0
 }
 
-func generateGameID() int {
+func generateGameID() (ID int) {
+	ID = database.games.counter
 	database.games.counter++
-	return database.games.counter
+
+	return
 }

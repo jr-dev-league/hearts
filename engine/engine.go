@@ -72,7 +72,7 @@ func (game *State) ViewAs(p uint8) (view State) {
 // PlayUp plays one card face up by player index, p, and card index, c.
 // Because played cards are still owned by the player that played them,
 // there is no need to remove it from their hand. It should be up to the
-// view to display the card in the middle of the table.
+// client to display the card in the middle of the table.
 func (game *State) PlayUp(p uint8, c Card) error {
 	if game.Readonly {
 		return errors.New("cannot edit a readonly game")
