@@ -15,24 +15,24 @@ const maxHandSize = 13
 
 // A Card represents a playing card.
 type Card struct {
-	exposed bool
-	played  bool
-	suit    string
-	value   uint8
+	Exposed bool
+	Played  bool
+	Suit    string
+	Value   uint8
 }
 
 // A Player represents the hand and round score of a player
 type Player struct {
-	cardCount uint8
-	hand      []Card
-	points    int8
+	CardCount uint8
+	Hand      []Card
+	Points    int8
 }
 
 // A State represents the complete game state
 type State struct {
-	broken    bool
-	players   [4]Player
-	readonly  bool
-	shootable bool
-	takenLast uint8
+	Broken    bool
+	Players   [4]Player
+	Readonly  bool
+	Shootable bool
+	TakenLast uint8
 }

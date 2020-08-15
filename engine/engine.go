@@ -3,107 +3,127 @@ package engine
 import "errors"
 
 // New creates a new game status
-func New() State {
-	game := State{
-		broken:    false,
-		players:   [4]Player{},
-		takenLast: 4,
-		shootable: true,
-		readonly:  false,
+func New() (game State) {
+	game = State{
+		Broken:    false,
+		Players:   [4]Player{},
+		TakenLast: 4,
+		Shootable: true,
+		Readonly:  false,
 	}
 
-	return game
+	return
 }
 
 // SetPlayer sets a player at the given index
 func (game *State) SetPlayer(i uint8, points int8, cardCount uint8, hand []Card) error {
-	if game.readonly {
+	if game.Readonly {
 		return errors.New("cannot edit a readonly game")
 	}
 
-	if game.players[i].hand != nil {
+	if game.Players[i].Hand != nil {
 		return errors.New("this player has already been set")
 	}
 
-	game.players[i] = Player{cardCount, hand, points}
+	game.Players[i] = Player{cardCount, hand, points}
 
 	return nil
 }
 
 // Player returns a player by the given index
 func (game *State) Player(i uint8) (*Player, error) {
-	hand := game.players[i].hand
+	hand := game.Players[i].Hand
 
 	if hand == nil {
 		return nil, errors.New("this player had not been set")
 	}
 
-	return &game.players[i], nil
+	return &game.Players[i], nil
 }
 
 // ViewAs returns a game state as known by a given (by index) player
-func (game *State) ViewAs(p uint8) State {
-	view := New()
+func (game *State) ViewAs(p uint8) (view State) {
+	view = New()
 
-	for i := uint8(0); i < uint8(len(game.players)); i++ {
-		player := &game.players[i]
+	for i := uint8(0); i < uint8(len(game.Players)); i++ {
+		player := &game.Players[i]
 		if i == p {
-			view.SetPlayer(i, player.points, maxHandSize, player.hand)
+			view.SetPlayer(i, player.Points, maxHandSize, player.Hand)
 		} else {
 			hand := make([]Card, 0, maxHandSize)
 
-			for c := range game.players[i].hand {
-				card := game.players[i].hand[c]
+			for c := range game.Players[i].Hand {
+				card := game.Players[i].Hand[c]
 
-				if card.played {
+				if card.Played {
 					hand = append(hand, card)
 				}
 			}
 
-			view.SetPlayer(i, player.points, maxHandSize, hand)
+			view.SetPlayer(i, player.Points, maxHandSize, hand)
 		}
 	}
 
-	view.readonly = true
-	return view
+	view.Readonly = true
+
+	return
 }
 
 // PlayUp plays one card face up by player index, p, and card index, c.
 // Because played cards are still owned by the player that played them,
 // there is no need to remove it from their hand. It should be up to the
-// view to display the card in the middle of the table.
+// client to display the card in the middle of the table.
 func (game *State) PlayUp(p uint8, c Card) error {
-	if game.readonly {
+	if game.Readonly {
 		return errors.New("cannot edit a readonly game")
 	}
 
-	player := game.players[p]
-	i, err := findCard(player.hand, c)
+	player := game.Players[p]
+	i, err := findCard(player.Hand, c)
 
 	if err != nil {
 		return err
 	}
 
-	if player.hand[i].played {
+	if player.Hand[i].Played {
 		return errors.New("selected card was already played")
 	}
 
-	player.hand[i].played = true
-	player.hand[i].exposed = true
-	player.cardCount--
+	player.Hand[i].Played = true
+	player.Hand[i].Exposed = true
+	player.CardCount--
 
 	return nil
 }
 
 // Deal shuffles a deck of cards and deals it out to each player.
 func (game *State) Deal() error {
-	return errors.New("not implemented")
+	deck := stdDeck()
+
+	shuffle(deck)
+
+	for i := 0; i < len(game.Players); i++ {
+		player := &game.Players[i]
+		if len(player.Hand) > 0 {
+			return errors.New("one or more players already has cards")
+		}
+
+		hand, err := dealHand(13, &deck)
+
+		if err != nil {
+			return err
+		}
+
+		player.Hand = hand
+	}
+
+	return nil
 }
 
 // Discard deletes a card from the hand of the player p
 func (game *State) Discard(p uint8, card Card) error {
-	pl := &game.players[p]
-	i, err := findCard(pl.hand, card)
+	pl := &game.Players[p]
+	i, err := findCard(pl.Hand, card)
 
 	if err != nil {
 		return errors.New("engine.Game.Discard: card not found")
@@ -119,16 +139,17 @@ func (game *State) Discard(p uint8, card Card) error {
 // DiscardPlayed played deletes all cards from the game that have been played,
 // and returns a slice of the cards deleted in this way
 func (game *State) DiscardPlayed() (stack []Card) {
-	for p := range game.players {
-		pl := &game.players[p]
-		for i, card := range pl.hand {
-			if card.played == true {
+	for p := range game.Players {
+		pl := &game.Players[p]
+		for i, card := range pl.Hand {
+			if card.Played == true {
 				pl.discard(i, card)
 				stack = append(stack, card)
 			}
 		}
 	}
-	return stack
+
+	return
 }
 
 // PRIVATE HELPER FUNCTIONS
@@ -136,16 +157,16 @@ func (game *State) DiscardPlayed() (stack []Card) {
 // discard (lowercase) is a helper method to call on a player to remove a
 // card at index i in their hand
 func (player *Player) discard(i int, card Card) {
-	player.hand = append(player.hand[:i], player.hand[i+1:]...)
-	player.cardCount--
+	player.Hand = append(player.Hand[:i], player.Hand[i+1:]...)
+	player.CardCount--
 }
 
 // findCard searches a given hand for a card. Returns the card index if found
 // and an error if not.
 func findCard(stack []Card, target Card) (int, error) {
 	for i, card := range stack {
-		if target.suit == card.suit &&
-			target.value == card.value {
+		if target.Suit == card.Suit &&
+			target.Value == card.Value {
 			return i, nil
 		}
 	}
