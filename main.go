@@ -3,12 +3,18 @@ package main
 import (
 	"log"
 	"net/http"
+
+	"github.com/jr-dev-league/go-router"
 )
 
 func main() {
-	http.HandleFunc("/api/games", gamesHandler)
+	r := router.Router{}
+	err := r.AddRoute(http.MethodGet, "/api/games", getGamesHandler)
+	err = r.AddRoute(http.MethodPost, "/api/games", createGameHandler)
 
-	err := http.ListenAndServe(":3000", nil)
+	if err != nil {
+		log.Fatal(err)
+	}
 
-	log.Fatal(err)
+	log.Fatal(http.ListenAndServe(":3000", r))
 }
