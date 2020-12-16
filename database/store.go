@@ -1,6 +1,9 @@
 package database
 
-import "sync"
+import (
+	"errors"
+	"sync"
+)
 
 var once sync.Once
 var database Store
@@ -74,18 +77,32 @@ func (s *Store) AddGame(data GameData) (record GameRecord) {
 
 	s.games.data[record.ID] = record
 
-	return record
+	return
 }
 
 // Games returns all games. You aren't supposed to call it "getGames" because Go is opinionated about weird shit.
-func (s *Store) Games() []GameRecord {
-	games := []GameRecord{}
+func (s *Store) Games() (games []GameRecord) {
+	games = []GameRecord{}
 
 	for _, game := range s.games.data {
 		games = append(games, game)
 	}
 
 	return games
+}
+
+// Game takes a game id and returns the corresponding game record.
+func (s *Store) Game(ID int) (game GameRecord, err error) {
+	err = errors.New("not found")
+
+	for _, record := range s.games.data {
+		if record.ID == ID {
+			game = record
+			err = nil
+		}
+	}
+
+	return
 }
 
 func generateID(table string) (ID int) {

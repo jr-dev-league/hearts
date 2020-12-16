@@ -10,6 +10,7 @@ import (
 func main() {
 	r := router.Router{}
 	err := r.AddRoute(http.MethodGet, "/api/games", getGamesHandler)
+	err = r.AddRoute(http.MethodGet, "/api/games/:id", getGameHandler)
 	err = r.AddRoute(http.MethodPost, "/api/games", createGameHandler)
 
 	if err != nil {

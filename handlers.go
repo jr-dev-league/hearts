@@ -2,7 +2,9 @@ package main
 
 import (
 	"net/http"
+	"strconv"
 
+	"github.com/jr-dev-league/go-router"
 	"github.com/jr-dev-league/hearts/database"
 )
 
@@ -15,20 +17,34 @@ type errorResponse struct {
 	message    string
 }
 
-func gamesHandler(w http.ResponseWriter, req *http.Request) {
-	switch req.Method {
-	case http.MethodGet:
-		getGamesHandler(w, req)
-	case http.MethodPost:
-		createGameHandler(w, req)
-	}
-}
-
 func getGamesHandler(w http.ResponseWriter, req *http.Request) {
 	db := database.Connection()
 	games := db.Games()
 
 	writeResponse(w, req, games, http.StatusOK)
+}
+
+func getGameHandler(w http.ResponseWriter, req *http.Request) {
+	params := router.PathParams(req)
+	gameIDParam := params["id"]
+	gameID, err := strconv.ParseInt(gameIDParam, 10, 0)
+
+	if err != nil {
+		writeResponse(w, req, nil, http.StatusBadRequest)
+
+		return
+	}
+
+	db := database.Connection()
+	game, err := db.Game(int(gameID))
+
+	if err != nil {
+		writeResponse(w, req, nil, 404)
+
+		return
+	}
+
+	writeResponse(w, req, game, http.StatusOK)
 }
 
 func createGameHandler(w http.ResponseWriter, req *http.Request) {
@@ -40,6 +56,8 @@ func createGameHandler(w http.ResponseWriter, req *http.Request) {
 		message := "Internal Server Error."
 		errBody := errorResponse{statusCode, message}
 		writeResponse(w, req, errBody, http.StatusInternalServerError)
+
+		return
 	}
 
 	writeResponse(w, req, resBody, http.StatusCreated)

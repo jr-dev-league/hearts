@@ -1,7 +1,4 @@
-
-github.com/jr-dev-league/go-router v0.0.0-20200907222536-7baa7dec4941 h1:Zbz69+1zq/OVIT77zTzQ3MovNcSinIoyAvGRYKXTlfQ=
-github.com/jr-dev-league/go-router v0.0.0-20200907222536-7baa7dec4941/go.mod h1:gqHRjmwat5eimvEIdzb5ZRy00cvkvTxNZEg8ujkHOP8=
-github.com/jr-dev-league/go-router v0.0.0-20200907230658-717a1d913080 h1:Hbf9Sx57BQgma8QmNON3msTQJVFn5zo2tQk7TIOK/Tg=
-github.com/jr-dev-league/go-router v0.0.0-20200907230658-717a1d913080/go.mod h1:gqHRjmwat5eimvEIdzb5ZRy00cvkvTxNZEg8ujkHOP8=
-github.com/jr-dev-league/go-router v0.0.0-20200907231254-ee2c5be3e6de h1:9Uhv0rv9ky3LzbfUENCaY0EvQSdJFAAavdsVKkKfonE=
-github.com/jr-dev-league/go-router v0.0.0-20200907231254-ee2c5be3e6de/go.mod h1:gqHRjmwat5eimvEIdzb5ZRy00cvkvTxNZEg8ujkHOP8=
+github.com/jr-dev-league/go-router v0.0.0-20201215075523-05f90673c569 h1:LiwXNWK0jep6ITHtDSRtjFnj73je2Jf+gXbolszBtts=
+github.com/jr-dev-league/go-router v0.0.0-20201215075523-05f90673c569/go.mod h1:7dcCCyEVX1ZPritP9hHzwRmkc2BfVous2jObSqFh3ls=
+github.com/jr-dev-league/go-router v0.0.0-20201215083809-19d616162fbd h1:PdIIcWbbf+7koD3h7lXZGtX8fJAU/76+TDJZ6A7niHQ=
+github.com/jr-dev-league/go-router v0.0.0-20201215083809-19d616162fbd/go.mod h1:7dcCCyEVX1ZPritP9hHzwRmkc2BfVous2jObSqFh3ls=
