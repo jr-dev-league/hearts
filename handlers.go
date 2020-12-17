@@ -8,13 +8,29 @@ import (
 	"github.com/jr-dev-league/hearts/database"
 )
 
+type errorResponse struct {
+	statusCode int
+	message    string
+}
+
 type gameResponse struct {
 	ID int `json:"ID"`
 }
 
-type errorResponse struct {
-	statusCode int
-	message    string
+func createGameHandler(w http.ResponseWriter, req *http.Request) {
+	newGame, err := createGame()
+	resBody := gameResponse{ID: newGame.ID}
+
+	if err != nil {
+		statusCode := http.StatusInternalServerError
+		message := "Internal Server Error."
+		errBody := errorResponse{statusCode, message}
+		writeResponse(w, req, errBody, http.StatusInternalServerError)
+
+		return
+	}
+
+	writeResponse(w, req, resBody, http.StatusCreated)
 }
 
 func getGamesHandler(w http.ResponseWriter, req *http.Request) {
@@ -47,18 +63,6 @@ func getGameHandler(w http.ResponseWriter, req *http.Request) {
 	writeResponse(w, req, game, http.StatusOK)
 }
 
-func createGameHandler(w http.ResponseWriter, req *http.Request) {
-	newGame, err := createGame()
-	resBody := gameResponse{ID: newGame.ID}
+// func playCard(w http.ResponseWriter, req *http.Request) {
 
-	if err != nil {
-		statusCode := http.StatusInternalServerError
-		message := "Internal Server Error."
-		errBody := errorResponse{statusCode, message}
-		writeResponse(w, req, errBody, http.StatusInternalServerError)
-
-		return
-	}
-
-	writeResponse(w, req, resBody, http.StatusCreated)
-}
+// }

@@ -26,7 +26,7 @@ will use the net/http package.
 The game resource manages the state of the game. Requests to this resource
 do things like:
 
-- [ ] Get the state of the game
+- [x] Get the state of the game
 - [ ] Get the state of the game for a particular player
 - [ ] Play a card from a players hand
 

@@ -9,13 +9,10 @@ import (
 
 func main() {
 	r := router.Router{}
-	err := r.AddRoute(http.MethodGet, "/api/games", getGamesHandler)
-	err = r.AddRoute(http.MethodGet, "/api/games/:id", getGameHandler)
-	err = r.AddRoute(http.MethodPost, "/api/games", createGameHandler)
-
-	if err != nil {
-		log.Fatal(err)
-	}
+	r.AddRoute(http.MethodPost, "/api/games", authorizeEndpoint(createGameHandler))
+	r.AddRoute(http.MethodGet, "/api/games", authorizeEndpoint(getGamesHandler))
+	r.AddRoute(http.MethodGet, "/api/games/:id", authorizeEndpoint(getGameHandler))
+	// r.AddRoute(http.MethodPatch, "/api/games/:id", authorizeEndpoint(playCard))
 
 	log.Fatal(http.ListenAndServe(":3000", r))
 }

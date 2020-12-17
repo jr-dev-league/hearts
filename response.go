@@ -6,6 +6,10 @@ import (
 	"net/http"
 )
 
+type resError struct {
+	error string
+}
+
 func writeResponse(w http.ResponseWriter, req *http.Request, i interface{}, code int) ([]byte, error) {
 	bytes, err := json.Marshal(i)
 	if err != nil {
