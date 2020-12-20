@@ -27,7 +27,8 @@ func Connection() *Store {
 						{Suit: Hearts, Value: 0},
 					},
 					Active: []Card{},
-					Score:  100,
+					Total:  100,
+					Round:  16,
 				},
 				{
 					Hand: []Card{
@@ -36,7 +37,8 @@ func Connection() *Store {
 						{Suit: Diamonds, Value: 0},
 					},
 					Active: []Card{},
-					Score:  100,
+					Total:  100,
+					Round:  4,
 				},
 				{
 					Hand: []Card{
@@ -45,7 +47,8 @@ func Connection() *Store {
 						{Suit: Diamonds, Value: 8},
 					},
 					Active: []Card{},
-					Score:  100,
+					Total:  100,
+					Round:  0,
 				},
 				{
 					Hand: []Card{
@@ -54,7 +57,8 @@ func Connection() *Store {
 						{Suit: Hearts, Value: 4},
 					},
 					Active: []Card{},
-					Score:  100,
+					Total:  100,
+					Round:  2,
 				},
 			},
 			Phase:         "play",
@@ -98,6 +102,21 @@ func (s *Store) Game(ID int) (game GameRecord, err error) {
 	for _, record := range s.games.data {
 		if record.ID == ID {
 			game = record
+			err = nil
+		}
+	}
+
+	return
+}
+
+// UpdateGame takes a GameRecord, finds the record with the same ID and replaces it.
+// If the game is not found, an error is returned.
+func (s *Store) UpdateGame(game GameRecord) (err error) {
+	err = errors.New("not found")
+
+	for i, record := range s.games.data {
+		if record.ID == game.ID {
+			s.games.data[i] = game
 			err = nil
 		}
 	}

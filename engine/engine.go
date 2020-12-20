@@ -1,6 +1,8 @@
 package engine
 
-import "errors"
+import (
+	"errors"
+)
 
 // New creates a new game status
 func New() (game State) {
@@ -15,7 +17,9 @@ func New() (game State) {
 	return
 }
 
-// SetPlayer sets a player at the given index
+// SetPlayer sets a player at the given index. It takes and index, i, which is the player index;
+// it takes points, which is the number of points the plater has; t takes cardCount which is
+// the number of cards a player has; and it takes hand which are the cards at the player.
 func (game *State) SetPlayer(i uint8, points int8, cardCount uint8, hand []Card) error {
 	if game.Readonly {
 		return errors.New("cannot edit a readonly game")
@@ -30,10 +34,11 @@ func (game *State) SetPlayer(i uint8, points int8, cardCount uint8, hand []Card)
 	return nil
 }
 
-// Player returns a player by the given index
+// Player returns a player by the given index, i.
 func (game *State) Player(i uint8) (*Player, error) {
 	hand := game.Players[i].Hand
 
+	// TODO: is this a useful error? Is this a useful check?
 	if hand == nil {
 		return nil, errors.New("this player had not been set")
 	}
@@ -47,15 +52,15 @@ func (game *State) ViewAs(p uint8) (view State) {
 
 	for i := uint8(0); i < uint8(len(game.Players)); i++ {
 		player := &game.Players[i]
-		if i == p {
+		if i == p { // if we are viewing from the given player...
 			view.SetPlayer(i, player.Points, maxHandSize, player.Hand)
-		} else {
+		} else { // if we are viewing an opponent...
 			hand := make([]Card, 0, maxHandSize)
 
 			for c := range game.Players[i].Hand {
 				card := game.Players[i].Hand[c]
 
-				if card.Played {
+				if card.Exposed { // only show exposed cards
 					hand = append(hand, card)
 				}
 			}
@@ -64,7 +69,7 @@ func (game *State) ViewAs(p uint8) (view State) {
 		}
 	}
 
-	view.Readonly = true
+	view.Readonly = true // TODO: I still don't understand why this is useful
 
 	return
 }
@@ -73,8 +78,11 @@ func (game *State) ViewAs(p uint8) (view State) {
 // Because played cards are still owned by the player that played them,
 // there is no need to remove it from their hand. It should be up to the
 // client to display the card in the middle of the table.
+//
+// Returns an error if the state is read only, or if the selected card has already been
+// played.
 func (game *State) PlayUp(p uint8, c Card) error {
-	if game.Readonly {
+	if game.Readonly { // Why would the engine try to play on a game it can't play?
 		return errors.New("cannot edit a readonly game")
 	}
 
@@ -96,7 +104,8 @@ func (game *State) PlayUp(p uint8, c Card) error {
 	return nil
 }
 
-// Deal shuffles a deck of cards and deals it out to each player.
+// Deal shuffles a deck of cards and deals it out to each player. returns an error if cards
+// have already been dealt.
 func (game *State) Deal() error {
 	deck := stdDeck()
 

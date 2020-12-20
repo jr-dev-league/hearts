@@ -40,7 +40,8 @@ type Card struct {
 type Player struct {
 	Hand   []Card `json:"hand"`
 	Active []Card `json:"active"`
-	Score  int    `json:"score"`
+	Total  int    `json:"total"`
+	Round  int    `json:"round"`
 }
 
 // GameRecord represents a game as it exists in the "database."

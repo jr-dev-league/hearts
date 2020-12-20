@@ -1,11 +1,13 @@
 package main
 
 import (
+	"encoding/json"
 	"net/http"
 	"strconv"
 
 	"github.com/jr-dev-league/go-router"
 	"github.com/jr-dev-league/hearts/database"
+	"github.com/jr-dev-league/hearts/engine"
 )
 
 type errorResponse struct {
@@ -17,30 +19,21 @@ type gameResponse struct {
 	ID int `json:"ID"`
 }
 
-func createGameHandler(w http.ResponseWriter, req *http.Request) {
-	newGame, err := createGame()
+func newGameHandler(w http.ResponseWriter, req *http.Request) {
+	newGame := createGame()
 	resBody := gameResponse{ID: newGame.ID}
-
-	if err != nil {
-		statusCode := http.StatusInternalServerError
-		message := "Internal Server Error."
-		errBody := errorResponse{statusCode, message}
-		writeResponse(w, req, errBody, http.StatusInternalServerError)
-
-		return
-	}
 
 	writeResponse(w, req, resBody, http.StatusCreated)
 }
 
-func getGamesHandler(w http.ResponseWriter, req *http.Request) {
+func gamesHandler(w http.ResponseWriter, req *http.Request) {
 	db := database.Connection()
 	games := db.Games()
 
 	writeResponse(w, req, games, http.StatusOK)
 }
 
-func getGameHandler(w http.ResponseWriter, req *http.Request) {
+func gameHandler(w http.ResponseWriter, req *http.Request) {
 	params := router.PathParams(req)
 	gameIDParam := params["id"]
 	gameID, err := strconv.ParseInt(gameIDParam, 10, 0)
@@ -63,6 +56,33 @@ func getGameHandler(w http.ResponseWriter, req *http.Request) {
 	writeResponse(w, req, game, http.StatusOK)
 }
 
-// func playCard(w http.ResponseWriter, req *http.Request) {
+func playCardHandler(w http.ResponseWriter, req *http.Request) {
+	user := getUser(req)
+	params := router.PathParams(req)
+	cardInput := req.Body
+	gameID := params["id"]
 
-// }
+	var card engine.Card
+	cardDecoder := json.NewDecoder(cardInput)
+	err := cardDecoder.Decode(&card)
+
+	if err != nil {
+		writeResponse(w, req, resError{"Bad Request. No body found."}, 400)
+
+		return
+	}
+
+	db := database.Connection()
+	ID, err := strconv.ParseInt(gameID, 0, 0)
+
+	if err != nil {
+		writeResponse(w, req, resError{"Not Found."}, 404)
+
+		return
+	}
+
+	game, err := db.Game(int(ID))
+
+	state := toState(game)
+	state.PlayUp(uint8(user.ID), card)
+}
