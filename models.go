@@ -54,7 +54,7 @@ func createGame() (gameRecord database.GameRecord) {
 //
 // newPlayer is the record to be stored in the database. has2Cbs is a flag that signals that the
 // player has the two of clubs.
-func recordPlayer(player *engine.Player, score int) (newPlayer database.Player, has2Cbs bool) {
+func recordPlayer(player *engine.Player, score uint8) (newPlayer database.Player, has2Cbs bool) {
 	var hand []database.Card
 
 	// activeCards is ithe card or cards that have been played. They remain with the player until

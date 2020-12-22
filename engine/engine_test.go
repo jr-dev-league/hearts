@@ -89,7 +89,7 @@ func TestNewGameState(t *testing.T) {
 func TestSetAndGet(t *testing.T) {
 	game := New()
 
-	err := game.SetPlayer(0, 0, maxHandSize, cloneHand(handOne))
+	err := game.SetPlayer(0, 0, 100, maxHandSize, cloneHand(handOne))
 
 	if err != nil {
 		t.Error("should be able to set an unset hand")
@@ -101,7 +101,7 @@ func TestSetAndGet(t *testing.T) {
 		t.Error("should be able to get a set player")
 	}
 
-	err = game.SetPlayer(0, 0, maxHandSize, cloneHand(handFour))
+	err = game.SetPlayer(0, 0, 100, maxHandSize, cloneHand(handFour))
 
 	if err == nil {
 		t.Error("should not be able to set a player who is already set")
@@ -125,10 +125,10 @@ func TestPlayCard(t *testing.T) {
 	game := New()
 	cardIndex := 3
 
-	game.SetPlayer(0, 0, maxHandSize, cloneHand(handOne))
-	game.SetPlayer(1, 0, maxHandSize, cloneHand(handTwo))
-	game.SetPlayer(2, 0, maxHandSize, cloneHand(handThree))
-	game.SetPlayer(3, 0, maxHandSize, cloneHand(handFour))
+	game.SetPlayer(0, 0, 100, maxHandSize, cloneHand(handOne))
+	game.SetPlayer(1, 0, 100, maxHandSize, cloneHand(handTwo))
+	game.SetPlayer(2, 0, 100, maxHandSize, cloneHand(handThree))
+	game.SetPlayer(3, 0, 100, maxHandSize, cloneHand(handFour))
 
 	player, _ := game.Player(0)
 
@@ -168,10 +168,10 @@ func TestPlayCard(t *testing.T) {
 func TestViewAs(t *testing.T) {
 	game := New()
 
-	game.SetPlayer(0, 0, maxHandSize, cloneHand(handOne))
-	game.SetPlayer(1, 0, maxHandSize, cloneHand(handTwo))
-	game.SetPlayer(2, 0, maxHandSize, cloneHand(handThree))
-	game.SetPlayer(3, 0, maxHandSize, cloneHand(handFour))
+	game.SetPlayer(0, 0, 100, maxHandSize, cloneHand(handOne))
+	game.SetPlayer(1, 0, 100, maxHandSize, cloneHand(handTwo))
+	game.SetPlayer(2, 0, 100, maxHandSize, cloneHand(handThree))
+	game.SetPlayer(3, 0, 100, maxHandSize, cloneHand(handFour))
 
 	view := game.ViewAs(playerThree)
 
@@ -181,7 +181,7 @@ func TestViewAs(t *testing.T) {
 		t.Error("should not be able to play cards in a readonly state")
 	}
 
-	err = view.SetPlayer(0, 10, 12, handOne)
+	err = view.SetPlayer(0, 10, 100, 12, handOne)
 
 	if err == nil {
 		t.Error("should not be able to set players in a readonly state")
@@ -267,7 +267,7 @@ func TestDeal(t *testing.T) {
 func TestDiscard(t *testing.T) {
 	game := New()
 
-	game.SetPlayer(0, 0, maxHandSize, cloneHand(handOne))
+	game.SetPlayer(0, 0, 100, maxHandSize, cloneHand(handOne))
 
 	spadesAce := Card{true, true, Spades, 0}
 	err := game.Discard(0, spadesAce)
@@ -370,7 +370,7 @@ func TestDiscard(t *testing.T) {
 		{Value: 4, Suit: Spades},
 	}
 
-	game.SetPlayer(1, 0, 1, expected)
+	game.SetPlayer(1, 0, 1, 100, expected)
 
 	err = game.Discard(1, spadesAce)
 	if err == nil {
@@ -404,10 +404,10 @@ func TestDiscard(t *testing.T) {
 func TestDiscardAll(t *testing.T) {
 	game := New()
 
-	game.SetPlayer(0, 0, maxHandSize, cloneHand(handOne))
-	game.SetPlayer(1, 0, maxHandSize, cloneHand(handTwo))
-	game.SetPlayer(2, 0, maxHandSize, cloneHand(handThree))
-	game.SetPlayer(3, 0, maxHandSize, cloneHand(handFour))
+	game.SetPlayer(0, 0, maxHandSize, 100, cloneHand(handOne))
+	game.SetPlayer(1, 0, maxHandSize, 100, cloneHand(handTwo))
+	game.SetPlayer(2, 0, maxHandSize, 100, cloneHand(handThree))
+	game.SetPlayer(3, 0, maxHandSize, 100, cloneHand(handFour))
 
 	game.PlayUp(0, handOne[0])
 	game.PlayUp(1, handTwo[0])

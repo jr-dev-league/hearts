@@ -5,7 +5,7 @@ import (
 	"github.com/jr-dev-league/hearts/engine"
 )
 
-func cvtPoints(g database.GameRecord) (points uint8, cards uint8) {
+func rtsPoints(g database.GameRecord) (points uint8, cards uint8) {
 	points = 26
 	cards = 14
 	players := g.Players
@@ -25,7 +25,7 @@ func cvtPoints(g database.GameRecord) (points uint8, cards uint8) {
 	return
 }
 
-func ctvBroken(points uint8, cards uint8) bool {
+func rtsBroken(points uint8, cards uint8) bool {
 	var max uint8
 
 	// Is the queen taken?
@@ -39,7 +39,7 @@ func ctvBroken(points uint8, cards uint8) bool {
 	return points < max
 }
 
-func cvtShootable(players [4]database.Player) bool {
+func rtsShootable(players [4]database.Player) bool {
 	withPoints := 0
 
 	for _, player := range players {
@@ -51,46 +51,17 @@ func cvtShootable(players [4]database.Player) bool {
 	return withPoints > 1
 }
 
-func cvtTakenLast(g database.GameRecord) (pIdx uint8) {
-	players := g.Players
-	played := false
-	turn := g.Turn
-
-	// If we count backwards, then the person who took last is the person who played a card
-	// after someone who didn't play a card. Otherwise it's the person at the top of the list.
-	// Otherwise, no on has played a card yet, and it's whoever's turn it is.
-	//
-	// For example: [played, didn't, played, played]
-	//									^
-	// this player went |~~~~~~~~~~~~~~~
-	// 			  first |
-	for i := uint8(len(players)) - 1; i >= 0; i-- { // count backward
-		if player := players[i]; len(player.Active) > 0 { // Have they played a card?
-			pIdx = i      // move the marker
-			played = true // flag that at least someone played
-		} else if played { // they didn't play, but someone else did
-			break // so the last person we saw must have been them.
-		}
-	}
-
-	if !played { // if we never found anyone who played...
-		pIdx = turn // then the person whose turn it is will go first
-	}
-
-	return
-}
-
-func cvtPlayers(g database.GameRecord) (p [4]engine.Player) {
+func rtsPlayers(g database.GameRecord) (p [4]engine.Player) {
 	playing := g.Phase == database.PhasePlay
 	pushCard := func(p engine.Player, card database.Card, active bool) {
-		eCard := engine.Card{
+		sCard := engine.Card{
 			Suit:    card.Suit,
 			Value:   card.Value,
 			Exposed: playing && active,
 			Played:  active,
 		}
 
-		p.Hand = append(p.Hand, eCard)
+		p.Hand = append(p.Hand, sCard)
 	}
 
 	for i, player := range g.Players {
@@ -106,38 +77,52 @@ func cvtPlayers(g database.GameRecord) (p [4]engine.Player) {
 	return
 }
 
+func strPlayers(g engine.State) (p [4]database.Player) {
+	for i, player := range g.Players {
+		var hand []database.Card
+		var active []database.Card
+		var round uint8 = player.Points
+
+		for _, card := range player.Hand {
+			rCard := database.Card{
+				Suit:  card.Suit,
+				Value: card.Value,
+			}
+
+			if card.Played {
+				active = append(active, rCard)
+			} else {
+				hand = append(hand, rCard)
+			}
+		}
+
+		p[i] = database.Player{
+			Hand:   hand,
+			Active: active,
+			Total:  player.Score,
+			Round:  round,
+		}
+	}
+
+	return
+}
+
 func toState(g database.GameRecord) (s engine.State) {
-	var broken bool
-	var takenLast uint8
-	var players [4]engine.Player
-	var canShoot bool
-	var readonly bool
+	points, cards := rtsPoints(g)
+	s.Broken = rtsBroken(points, cards)
+	s.Turn = g.Turn
+	s.Players = rtsPlayers(g)
+	s.Shootable = rtsShootable(g.Players)
+	s.Readonly = false
 
-	// figure out broken
-	points, cards := cvtPoints(g)
-	broken = ctvBroken(points, cards)
+	return
+}
 
-	// figure out takenLast
-	if g.Phase == database.PhasePlay {
-		takenLast = cvtTakenLast(g)
-	}
-
-	// figure out players
-	players = cvtPlayers(g)
-
-	// figure out shootable
-	canShoot = cvtShootable(g.Players)
-
-	// figure out readonly
-	readonly = false
-
-	s = engine.State{
-		Broken:    broken,
-		TakenLast: takenLast,
-		Players:   players,
-		Shootable: canShoot,
-		Readonly:  readonly,
-	}
+func toRecord(g engine.State, ID int) (r database.GameRecord) {
+	r.Players = strPlayers(g)
+	r.Turn = g.Turn
+	r.PassDirection = g.PassDirection
+	r.Phase = g.Phase
 
 	return
 }

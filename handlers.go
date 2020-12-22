@@ -85,4 +85,6 @@ func playCardHandler(w http.ResponseWriter, req *http.Request) {
 
 	state := toState(game)
 	state.PlayUp(uint8(user.ID), card)
+
+	db.UpdateGame(toRecord(state, game.ID))
 }

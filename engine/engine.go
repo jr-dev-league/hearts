@@ -9,7 +9,7 @@ func New() (game State) {
 	game = State{
 		Broken:    false,
 		Players:   [4]Player{},
-		TakenLast: 4,
+		Turn:      4,
 		Shootable: true,
 		Readonly:  false,
 	}
@@ -20,7 +20,7 @@ func New() (game State) {
 // SetPlayer sets a player at the given index. It takes and index, i, which is the player index;
 // it takes points, which is the number of points the plater has; t takes cardCount which is
 // the number of cards a player has; and it takes hand which are the cards at the player.
-func (game *State) SetPlayer(i uint8, points int8, cardCount uint8, hand []Card) error {
+func (game *State) SetPlayer(i uint8, points uint8, score uint8, cardCount uint8, hand []Card) error {
 	if game.Readonly {
 		return errors.New("cannot edit a readonly game")
 	}
@@ -29,7 +29,7 @@ func (game *State) SetPlayer(i uint8, points int8, cardCount uint8, hand []Card)
 		return errors.New("this player has already been set")
 	}
 
-	game.Players[i] = Player{cardCount, hand, points}
+	game.Players[i] = Player{cardCount, hand, points, score}
 
 	return nil
 }
@@ -53,7 +53,7 @@ func (game *State) ViewAs(p uint8) (view State) {
 	for i := uint8(0); i < uint8(len(game.Players)); i++ {
 		player := &game.Players[i]
 		if i == p { // if we are viewing from the given player...
-			view.SetPlayer(i, player.Points, maxHandSize, player.Hand)
+			view.SetPlayer(i, player.Points, player.Score, maxHandSize, player.Hand)
 		} else { // if we are viewing an opponent...
 			hand := make([]Card, 0, maxHandSize)
 
@@ -65,7 +65,7 @@ func (game *State) ViewAs(p uint8) (view State) {
 				}
 			}
 
-			view.SetPlayer(i, player.Points, maxHandSize, hand)
+			view.SetPlayer(i, player.Points, player.Score, maxHandSize, hand)
 		}
 	}
 

@@ -43,7 +43,10 @@ type Player struct {
 	Hand []Card
 
 	// Points is the number of points the player has taken in the round.
-	Points int8
+	Points uint8
+
+	// Score is the players total score.
+	Score uint8
 }
 
 // A State represents the complete game state
@@ -61,6 +64,12 @@ type State struct {
 	// Shootable is a flag that indicates that no more than one player holds any point.
 	Shootable bool
 
-	// TakenLast is an array index from 0–3 that indicates which player was the last to take a trick.
-	TakenLast uint8
+	// PassDiretion indicates which way the players pass their cards this round.
+	PassDirection string
+
+	// Phase indicates which part of the round is happening: pass or play.
+	Phase string
+
+	// Turn is an array index from 0–3 that indicates whose turn it is.
+	Turn uint8
 }
